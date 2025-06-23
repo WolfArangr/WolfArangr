@@ -601,7 +601,7 @@
                 this.setupEventListeners();
                 this.updateStats();
                 this.renderFilterTabs();
-                this.renderArticles();
+                this.filterAndRenderArticles(); // Cambiado aquí
             }
 
             loadArticles() {
@@ -622,7 +622,7 @@
         <p>A menudo se afirma que los evangelios fueron originalmente anónimos. Sin embargo, esta afirmación, tan extendida en el ámbito académico, puede parecer desconcertante si consideramos ciertos hechos históricos y literarios.</p>
 
         <blockquote>
-            “Todos los manuscritos griegos antiguos que contienen el comienzo de uno de los evangelios incluyen los títulos ‘Según Mateo’, ‘Según Marcos’, etc. Sin embargo, parece poco probable que todos los evangelistas eligieran de forma independiente esa fórmula…” — Craig Blomberg
+            "Todos los manuscritos griegos antiguos que contienen el comienzo de uno de los evangelios incluyen los títulos 'Según Mateo', 'Según Marcos', etc. Sin embargo, parece poco probable que todos los evangelistas eligieran de forma independiente esa fórmula…" — Craig Blomberg
         </blockquote>
 
         <h2>1. Los títulos aparecen en el siglo II tardío</h2>
@@ -644,7 +644,7 @@
         <p>El anonimato, en este contexto, no restaba autoridad, sino que la reforzaba. Como explica E.P. Sanders:</p>
 
         <blockquote>
-            “La pretensión de una historia anónima era más alta que la de una obra firmada. En el mundo antiguo, un libro anónimo —como un artículo enciclopédico hoy— implicaba total fiabilidad.”
+            "La pretensión de una historia anónima era más alta que la de una obra firmada. En el mundo antiguo, un libro anónimo —como un artículo enciclopédico hoy— implicaba total fiabilidad."
         </blockquote>
 
         <h2>Entonces, ¿eran anónimos los evangelios?</h2>
@@ -685,14 +685,13 @@
             updateStats() {
                 document.getElementById('totalArticles').textContent = this.articles.length;
                 document.getElementById('totalCategories').textContent = this.categories.size;
-                document.getElementById('totalLanguages').textContent = this.languages.size;
             }
 
             renderFilterTabs() {
                 const tabsContainer = document.getElementById('filterTabs');
                 const allCategories = Array.from(new Set(this.articles.map(a => a.fullCategory))).sort();
                 
-                let tabsHTML = '<button class="filter-tab active" data-filter="Todo">Todo</button>';
+                let tabsHTML = '<button class="filter-tab active" data-filter="all">Todo</button>';
                 
                 allCategories.forEach(category => {
                     tabsHTML += `<button class="filter-tab" data-filter="${category}">${category}</button>`;
