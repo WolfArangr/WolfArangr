@@ -574,7 +574,7 @@
             <button class="filter-tab active" data-filter="all">Todo</button>
         </div>
 
-        <div class="articles-grid" id="articlesGrid">
+        <div class="articles-container" id="articlesGrid">
             <div class="loading">Cargando...</div>
         </div>
 
@@ -692,7 +692,7 @@
                 const tabsContainer = document.getElementById('filterTabs');
                 const allCategories = Array.from(new Set(this.articles.map(a => a.fullCategory))).sort();
                 
-                let tabsHTML = '<button class="filter-tab active" data-filter="all">All</button>';
+                let tabsHTML = '<button class="filter-tab active" data-filter="all">Todo</button>';
                 
                 allCategories.forEach(category => {
                     tabsHTML += `<button class="filter-tab" data-filter="${category}">${category}</button>`;
