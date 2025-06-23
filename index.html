@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Thoughts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(255,255,255,0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .search-container {
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-input:focus {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: scale(1.02);
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .filter-tab:hover, .filter-tab.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .article-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .article-card:hover::before {
+            left: 100%;
+        }
+
+        .article-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .article-category {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .article-date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .article-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .article-excerpt {
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .read-more:hover {
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.3));
+            transform: translateX(5px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .no-articles {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .filter-tabs {
+                gap: 5px;
+            }
+            
+            .filter-tab {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .stats {
+                gap: 20px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo">My Digital Thoughts</h1>
+            <p class="tagline">Where ideas come to life</p>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search articles..." id="searchInput">
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalArticles">0</span>
+                <span class="stat-label">Articles</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalCategories">0</span>
+                <span class="stat-label">Categories</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalLanguages">0</span>
+                <span class="stat-label">Languages</span>
+            </div>
+        </div>
+
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+        </div>
+
+        <div class="articles-grid" id="articlesGrid">
+            <div class="loading">Discovering your writings...</div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 My Digital Thoughts. Crafted with passion.</p>
+        </footer>
+    </div>
+
+    <script>
+        class BlogManager {
+            constructor() {
+                this.articles = [];
+                this.filteredArticles = [];
+                this.categories = new Set();
+                this.languages = new Set();
+                this.currentFilter = 'all';
+                this.searchTerm = '';
+                
+                this.init();
+            }
+
+            async init() {
+                await this.discoverArticles();
+                this.setupEventListeners();
+                this.updateStats();
+                this.renderFilterTabs();
+                this.renderArticles();
+            }
+
+            async discoverArticles() {
+                // This function attempts to discover HTML files in the repository
+                // It uses various methods to find articles based on common patterns
+                
+                const possiblePaths = [
+                    'articles/',
+                    'posts/',
+                    'writings/',
+                    'blog/',
+                    ''
+                ];
+
+                const commonFilenames = [
+                    'index.html',
+                    'article1.html',
+                    'article2.html',
+                    'post1.html',
+                    'post2.html'
+                ];
+
+                // Try to fetch a directory listing or manifest file first
+                try {
+                    const response = await fetch('articles-manifest.json');
+                    if (response.ok) {
+                        const manifest = await response.json();
+                        for (const article of manifest.articles) {
+                            await this.processArticle(article.path);
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    // Manifest doesn't exist, continue with discovery
+                }
+
+                // Alternative: Try to read from a simple text file listing
+                try {
+                    const response = await fetch('articles-list.txt');
+                    if (response.ok) {
+                        const text = await response.text();
+                        const paths = text.split('\n').filter(path => path.trim() && path.endsWith('.html'));
+                        for (const path of paths) {
+                            await this.processArticle(path.trim());
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    // List doesn't exist, continue with discovery
+                }
+
+                // Fallback: Try common paths and filenames
+                for (const basePath of possiblePaths) {
+                    for (const filename of commonFilenames) {
+                        const fullPath = basePath + filename;
+                        if (fullPath !== 'index.html') { // Skip the main page
+                            await this.processArticle(fullPath);
+                        }
+                    }
+                }
+
+                // If no articles found, show sample data
+                if (this.articles.length === 0) {
+                    this.loadSampleData();
+                }
+            }
+
+            async processArticle(path) {
+                try {
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        const html = await response.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const article = this.extractArticleData(doc, path);
+                        if (article) {
+                            this.articles.push(article);
+                            
+                            if (article.language) this.languages.add(article.language);
+                            if (article.category) this.categories.add(article.category);
+                        }
+                    }
+                } catch (e) {
+                    // File doesn't exist or can't be fetched
+                }
+            }
+
+            extractArticleData(doc, path) {
+                // Extract metadata from various possible sources
+                const title = this.extractTitle(doc);
+                const category = this.extractCategory(doc);
+                const language = this.extractLanguage(doc);
+                const excerpt = this.extractExcerpt(doc);
+                const date = this.extractDate(doc);
+
+                if (title && (category || language)) {
+                    return {
+                        title,
+                        category: category || 'Uncategorized',
+                        language: language || 'Unknown',
+                        excerpt: excerpt || 'No excerpt available.',
+                        date: date || new Date().toLocaleDateString(),
+                        path,
+                        fullCategory: language && category ? `${language} - ${category}` : (category || language || 'General')
+                    };
+                }
+                return null;
+            }
+
+            extractTitle(doc) {
+                // Try multiple sources for title
+                return doc.querySelector('h1')?.textContent?.trim() ||
+                       doc.querySelector('title')?.textContent?.trim() ||
+                       doc.querySelector('[data-title]')?.getAttribute('data-title') ||
+                       doc.querySelector('meta[name="title"]')?.getAttribute('content') ||
+                       null;
+            }
+
+            extractCategory(doc) {
+                // Try multiple sources for category
+                return doc.querySelector('[data-category]')?.getAttribute('data-category') ||
+                       doc.querySelector('meta[name="category"]')?.getAttribute('content') ||
+                       doc.querySelector('.category')?.textContent?.trim() ||
+                       this.extractFromComment(doc, 'category') ||
+                       null;
+            }
+
+            extractLanguage(doc) {
+                // Try multiple sources for language
+                return doc.querySelector('[data-language]')?.getAttribute('data-language') ||
+                       doc.querySelector('meta[name="language"]')?.getAttribute('content') ||
+                       doc.querySelector('html')?.getAttribute('lang') ||
+                       doc.querySelector('.language')?.textContent?.trim() ||
+                       this.extractFromComment(doc, 'language') ||
+                       null;
+            }
+
+            extractExcerpt(doc) {
+                // Try multiple sources for excerpt
+                return doc.querySelector('[data-excerpt]')?.getAttribute('data-excerpt') ||
+                       doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+                       doc.querySelector('.excerpt')?.textContent?.trim() ||
+                       doc.querySelector('p')?.textContent?.trim()?.substring(0, 150) + '...' ||
+                       null;
+            }
+
+            extractDate(doc) {
+                // Try multiple sources for date
+                const dateStr = doc.querySelector('[data-date]')?.getAttribute('data-date') ||
+                               doc.querySelector('meta[name="date"]')?.getAttribute('content') ||
+                               doc.querySelector('.date')?.textContent?.trim() ||
+                               doc.querySelector('time')?.getAttribute('datetime') ||
+                               this.extractFromComment(doc, 'date');
+                
+                return dateStr ? new Date(dateStr).toLocaleDateString() : null;
+            }
+
+            extractFromComment(doc, key) {
+                // Extract metadata from HTML comments like <!-- category: Philosophy -->
+                const html = doc.documentElement.outerHTML;
+                const regex = new RegExp(`<!--\\s*${key}:\\s*([^\\-]+)\\s*-->`, 'i');
+                const match = html.match(regex);
+                return match ? match[1].trim() : null;
+            }
+
+            loadSampleData() {
+                // Sample data for demonstration
+                this.articles = [
+                    {
+                        title: "The Nature of Reality",
+                        category: "Philosophy",
+                        language: "English",
+                        fullCategory: "English - Philosophy",
+                        excerpt: "An exploration into the fundamental questions about existence, consciousness, and the nature of reality itself.",
+                        date: "2025-01-15",
+                        path: "#sample1"
+                    },
+                    {
+                        title: "El Futuro de la Democracia",
+                        category: "Política",
+                        language: "Español",
+                        fullCategory: "Español - Política",
+                        excerpt: "Un análisis profundo sobre los desafíos contemporáneos que enfrenta la democracia en el siglo XXI.",
+                        date: "2025-01-10",
+                        path: "#sample2"
+                    },
+                    {
+                        title: "Artificial Intelligence and Ethics",
+                        category: "Technology",
+                        language: "English",
+                        fullCategory: "English - Technology",
+                        excerpt: "Examining the ethical implications of AI development and its impact on society.",
+                        date: "2025-01-08",
+                        path: "#sample3"
+                    }
+                ];
+
+                this.articles.forEach(article => {
+                    this.languages.add(article.language);
+                    this.categories.add(article.category);
+                });
+            }
+
+            setupEventListeners() {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => {
+                    this.searchTerm = e.target.value.toLowerCase();
+                    this.filterAndRenderArticles();
+                });
+
+                document.getElementById('filterTabs').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('filter-tab')) {
+                        document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.getAttribute('data-filter');
+                        this.filterAndRenderArticles();
+                    }
+                });
+            }
+
+            updateStats() {
+                document.getElementById('totalArticles').textContent = this.articles.length;
+                document.getElementById('totalCategories').textContent = this.categories.size;
+                document.getElementById('totalLanguages').textContent = this.languages.size;
+            }
+
+            renderFilterTabs() {
+                const tabsContainer = document.getElementById('filterTabs');
+                const allCategories = Array.from(new Set(this.articles.map(a => a.fullCategory))).sort();
+                
+                let tabsHTML = '<button class="filter-tab active" data-filter="all">All</button>';
+                
+                allCategories.forEach(category => {
+                    tabsHTML += `<button class="filter-tab" data-filter="${category}">${category}</button>`;
+                });
+
+                tabsContainer.innerHTML = tabsHTML;
+            }
+
+            filterAndRenderArticles() {
+                this.filteredArticles = this.articles.filter(article => {
+                    const matchesFilter = this.currentFilter === 'all' || article.fullCategory === this.currentFilter;
+                    const matchesSearch = this.searchTerm === '' || 
+                                        article.title.toLowerCase().includes(this.searchTerm) ||
+                                        article.excerpt.toLowerCase().includes(this.searchTerm) ||
+                                        article.category.toLowerCase().includes(this.searchTerm);
+                    
+                    return matchesFilter && matchesSearch;
+                });
+
+                this.renderArticles();
+            }
+
+            renderArticles() {
+                const grid = document.getElementById('articlesGrid');
+                
+                if (this.filteredArticles.length === 0) {
+                    grid.innerHTML = '<div class="no-articles">No articles found matching your criteria.</div>';
+                    return;
+                }
+
+                let articlesHTML = '';
+                this.filteredArticles.forEach((article, index) => {
+                    articlesHTML += `
+                        <article class="article-card fade-in" style="animation-delay: ${index * 0.1}s">
+                            <div class="article-meta">
+                                <span class="article-category">${article.fullCategory}</span>
+                                <span class="article-date">${article.date}</span>
+                            </div>
+                            <h2 class="article-title">${article.title}</h2>
+                            <p class="article-excerpt">${article.excerpt}</p>
+                            <a href="${article.path}" class="read-more">
+                                Read More →
+                            </a>
+                        </article>
+                    `;
+                });
+
+                grid.innerHTML = articlesHTML;
+            }
+        }
+
+        // Initialize the blog when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new BlogManager();
+        });
+    </script>
+</body>
+</html>
