@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Gato</title>
+    <title>🐈</title>
     <style>
         * {
             margin: 0;
@@ -33,39 +33,124 @@
 
         header {
             text-align: center;
-            padding: 80px 0 60px;
+            padding: 100px 0 60px;
             position: relative;
         }
 
         .logo {
-            font-size: 4rem;
+            font-size: 5.5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #ffffff 0%, #3b82f6 50%, #06b6d4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 20px;
-            letter-spacing: -2px;
+            letter-spacing: -3px;
             position: relative;
+            animation: logoFloat 4s ease-in-out infinite;
+            text-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .logo::before {
+            content: '🐈';
+            position: absolute;
+            left: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            animation: catWiggle 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
+        }
+
+        @keyframes catWiggle {
+            0%, 100% {
+                transform: translateY(-50%) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-50%) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-50%) rotate(5deg);
+            }
         }
 
         .logo::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 2px;
+            width: 120px;
+            height: 3px;
             background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            animation: underlinePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes underlinePulse {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translateX(-50%) scaleX(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scaleX(1.2);
+            }
         }
 
         .tagline {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            font-weight: 400;
-            letter-spacing: 3px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #94a3b8 0%, #3b82f6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            animation: taglineFade 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes taglineFade {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .tagline::before {
+            content: '✨';
+            position: absolute;
+            left: -30px;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .tagline::after {
+            content: '✨';
+            position: absolute;
+            right: -30px;
+            animation: sparkle 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
         }
 
         .search-container {
@@ -511,8 +596,23 @@
 
         @media (max-width: 768px) {
             .logo {
-                font-size: 3rem;
-                letter-spacing: -1px;
+                font-size: 4rem;
+                letter-spacing: -2px;
+            }
+
+            .logo::before {
+                left: -60px;
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+                letter-spacing: 3px;
+            }
+
+            .tagline::before,
+            .tagline::after {
+                display: none;
             }
             
             .filter-tabs {
