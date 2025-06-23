@@ -692,7 +692,7 @@
                 const tabsContainer = document.getElementById('filterTabs');
                 const allCategories = Array.from(new Set(this.articles.map(a => a.fullCategory))).sort();
                 
-                let tabsHTML = '<button class="filter-tab active" data-filter="all">Todo</button>';
+                let tabsHTML = '<button class="filter-tab active" data-filter="Todo">Todo</button>';
                 
                 allCategories.forEach(category => {
                     tabsHTML += `<button class="filter-tab" data-filter="${category}">${category}</button>`;
