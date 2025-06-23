@@ -596,13 +596,13 @@
                 this.init();
             }
 
-            init() {
-                this.loadArticles();
-                this.setupEventListeners();
-                this.updateStats();
-                this.renderFilterTabs();
-                this.renderArticles();
-            }
+init() {
+    this.loadArticles();
+    this.setupEventListeners();
+    this.updateStats();
+    this.renderFilterTabs();
+    this.filterAndRenderArticles(); // Add this line
+}
 
             loadArticles() {
                 // Sample article with inline content - replace this with your articles
@@ -712,7 +712,6 @@
                     return matchesFilter && matchesSearch;
                 });
 
-                this.renderArticles();
             }
 
             renderArticles() {
