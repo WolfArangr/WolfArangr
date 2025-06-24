@@ -249,6 +249,43 @@
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
+.article-audio-player {
+    margin-top: 40px;
+    padding: 24px 32px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(25px);
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.article-audio-player:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.article-audio-player h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.article-audio-player audio {
+    width: 100%;
+    height: 40px;
+    filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.2));
+    outline: none;
+    border-radius: 8px;
+}
+        
+        
         /* Updated articles container using flexbox */
         .articles-container {
             display: flex;
@@ -787,6 +824,14 @@
     "content": `
         <h1>El Despertar de la Memoria Económica</h1>
         <h1>Hacia una Recuperación de la Autonomía Individual</h1>
+
+<div class="article-audio-player">
+    <h3>🎧 Escucha este artículo:</h3>
+    <audio controls>
+        <source src="audios/despertar-memoria-economica.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+</div>
 
         <p>En las profundidades de la conciencia colectiva contemporánea late un recuerdo ancestral que pugna por emerger, una memoria económica que trasciende las construcciones ideológicas del presente para conectar con formas primordiales de organización humana. Esta memoria, siguiendo la intuición platónica de la anamnesis, no constituye un mero ejercicio nostálgico, sino el redescubrimiento de capacidades latentes que la modernidad estatista ha conseguido ocultar pero nunca erradicar completamente.</p>
 
