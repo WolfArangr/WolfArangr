@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Miyutarot del Día</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;1,400&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Crimson Text', serif;
+      background: radial-gradient(ellipse at center, #2c1810 0%, #1a0f0a 50%, #0d0504 100%);
+      color: #f4e4c1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em 1em;
+      text-align: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffd700' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+      animation: twinkle 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 3.5em;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+      background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 3s ease-in-out infinite alternate;
+      z-index: 2;
+      position: relative;
+    }
+
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 5px #ffd700); }
+      to { filter: drop-shadow(0 0 25px #ffd700); }
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8em;
+      margin: 1.5em 0 1em 0;
+      color: #d4af37;
+      text-shadow: 0 0 10px #d4af37;
+      z-index: 2;
+      position: relative;
+    }
+
+    .weekly-section {
+      margin: 2em 0 4em 0;
+      z-index: 2;
+      position: relative;
+    }
+
+    .weekly-card {
+		  display: flex;
+	 flex-direction: column;
+	 justify-content: center;
+	 align-items: center;
+	 text-align: center;
+	 min-height: 300px;
+ 	 padding: 1.0em;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+      border: 2px solid #d4af37;
+      border-radius: 40px;
+      margin: 1em auto;
+      width: 300px;
+	  height: 500px
+      backdrop-filter: blur(15px);
+      box-shadow: 
+      0 10px 30px rgba(0,0,0,0.5),
+      0 0 50px rgba(212, 175, 55, 0.3),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: help;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-inner {
+      position: center;
+      width: 300px;
+      height: 500px;
+      transition: transform 1.5s;
+      transform-style: preserve-3d;
+    }
+
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 15px;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #ffd700;
+      padding: 0;
+    }
+
+    .card-back-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid #ffd700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .weekly-card .card-back-image {
+      height: 500px;
+    }
+
+    .card-front {
+      transform: rotateY(180deg);
+    }
+
+    .card-back-pattern {
+      font-size: 5em;
+      margin-bottom: 0.2em;
+	  margin-top: 0.5em;
+      text-shadow: 0 0 20px #ffd700;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .weekly-card .card-back-pattern {
+      font-size: 8em;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .card-back-text {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5em;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .weekly-card .card-back-text {
+      font-size: 2em;
+    }
+
+    .weekly-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,215,0,0.1) 50%, transparent 70%);
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .weekly-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.7),
+        0 0 80px rgba(212, 175, 55, 0.5),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      border-color: #ffd700;
+    }
+
+    .daily-section {
+      z-index: 2;
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .daily-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5em;
+      margin-top: 2em;
+    }
+
+    .daily-card {
+	  display: flex;
+	 flex-direction: column;
+	 justify-content: center;
+	 align-items: center;
+	 text-align: center;
+	 min-height: 300px;
+ 	 padding: 1.0em;
+      background: linear-gradient(135deg, rgba(139, 69, 19, 0.2) 0%, rgba(160, 82, 45, 0.1) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.6);
+      border-radius: 15px;
+      width: 300px;
+      backdrop-filter: blur(10px);
+      box-shadow: 
+        0 8px 25px rgba(0,0,0,0.4),
+        0 0 30px rgba(212, 175, 55, 0.2);
+      transition: all 1s ease;
+      cursor: help;
+      position: center;
+      overflow: hidden;
+    }
+
+    .daily-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .daily-card:hover::after {
+      left: 100%;
+    }
+
+    .daily-card:hover {
+      transform: translateY(-8px) rotate(1deg);
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.6),
+        0 0 50px rgba(212, 175, 55, 0.4);
+      border-color: #ffd700;
+    }
+
+    .card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 3.0em;
+      font-weight: 600;
+      margin-bottom: 0.8em;
+      color: #ffd700;
+      text-shadow: 0 0 10px #ffd700;
+    }
+
+    .daily-card .card-name {
+      font-size: 2.5em;
+    }
+
+    .card-description {
+      font-size: 1.2em;
+      line-height: 1.4;
+      color: #f4e4c1;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    .daily-card .card-description {
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5em; }
+      .daily-cards { flex-direction: column; align-items: center; }
+      .daily-card { width: 90%; max-width: 350px; }
+      .weekly-card { max-width: 90%; }
+    }
+
+    .mystical-symbol {
+      position: absolute;
+      color: rgba(212, 175, 55, 0.1);
+      font-size: 8em;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .symbol-1 { top: 10%; left: 5%; animation-delay: 0s; }
+    .symbol-2 { top: 60%; right: 5%; animation-delay: 2s; }
+    .symbol-3 { bottom: 20%; left: 10%; animation-delay: 4s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="mystical-symbol symbol-1">🌙</div>
+  <div class="mystical-symbol symbol-2">⭐</div>
+  <div class="mystical-symbol symbol-3">🔮</div>
+
+  <h1>🔮 Miyutarot 🔮</h1>
+  
+  <div class="weekly-section">
+    <h2>✨ Carta de la Semana ✨</h2>
+    <div id="weekly" class="weekly-card">
+      <div class="card-inner">
+        <div class="card-face card-back">
+          <img class="card-back-image" src="" alt="Carta del Tarot" loading="lazy">
+        </div>
+        <div class="card-face card-front">
+          <div class="card-name"></div>
+          <div class="card-description"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="daily-section">
+    <h2>🌟 Cartas del Día 🌟</h2>
+    <h3>✨ Elige una, dos o tres cartas para descubrir tu fortuna de hoy ✨</h3> 
+    <div id="daily" class="daily-cards"></div>
+  </div>
+
+  <script>
+    const mazoTarot = [
+      "El Loco", "El Mago", "La Suma Sacerdotisa", "La Emperatriz", "El Emperador", "El Hierofante",
+      "Los Enamorados", "El Carro", "La Fuerza", "El Ermitaño", "La Rueda de la Fortuna", "La Justicia",
+      "El Colgado", "La Muerte", "La Templanza", "El Diablo", "La Torre", "La Estrella",
+      "La Luna", "El Sol", "El Juicio", "El Mundo",
+      "As de Bastos", "2 de Bastos", "3 de Bastos", "4 de Bastos", "5 de Bastos", "6 de Bastos", "7 de Bastos", "8 de Bastos", "9 de Bastos", "10 de Bastos", "Sota de Bastos", "Caballero de Bastos", "Reina de Bastos", "Rey de Bastos",
+      "As de Copas", "2 de Copas", "3 de Copas", "4 de Copas", "5 de Copas", "6 de Copas", "7 de Copas", "8 de Copas", "9 de Copas", "10 de Copas", "Sota de Copas", "Caballero de Copas", "Reina de Copas", "Rey de Copas",
+      "As de Espadas", "2 de Espadas", "3 de Espadas", "4 de Espadas", "5 de Espadas", "6 de Espadas", "7 de Espadas", "8 de Espadas", "9 de Espadas", "10 de Espadas", "Sota de Espadas", "Caballero de Espadas", "Reina de Espadas", "Rey de Espadas",
+      "As de Oros", "2 de Oros", "3 de Oros", "4 de Oros", "5 de Oros", "6 de Oros", "7 de Oros", "8 de Oros", "9 de Oros", "10 de Oros", "Sota de Oros", "Caballero de Oros", "Reina de Oros", "Rey de Oros"
+    ];
+
+    // Mapeo de nombres en español a nombres de archivos en inglés
+    const nombreAArchivo = {
+      "El Loco": "thefool",
+      "El Mago": "themagician", 
+      "La Suma Sacerdotisa": "thehighpriestess",
+      "La Emperatriz": "theempress",
+      "El Emperador": "theemperor",
+      "El Hierofante": "thehierophant",
+      "Los Enamorados": "thelovers",
+      "El Carro": "thechariot",
+      "La Fuerza": "strength",
+      "El Ermitaño": "thehermit",
+      "La Rueda de la Fortuna": "wheeloffortune",
+      "La Justicia": "justice",
+      "El Colgado": "thehangedman",
+      "La Muerte": "death",
+      "La Templanza": "temperance",
+      "El Diablo": "thedevil",
+      "La Torre": "thetower",
+      "La Estrella": "thestar",
+      "La Luna": "themoon",
+      "El Sol": "thesun",
+      "El Juicio": "judgement",
+      "El Mundo": "theworld",
+      // Bastos (Wands)
+      "As de Bastos": "aceofwands",
+      "2 de Bastos": "twoofwands",
+      "3 de Bastos": "threeofwands", 
+      "4 de Bastos": "fourofwands",
+      "5 de Bastos": "fiveofwands",
+      "6 de Bastos": "sixofwands",
+      "7 de Bastos": "sevenofwands",
+      "8 de Bastos": "eightofwands",
+      "9 de Bastos": "nineofwands",
+      "10 de Bastos": "tenofwands",
+      "Sota de Bastos": "pageofwands",
+      "Caballero de Bastos": "knightofwands",
+      "Reina de Bastos": "queenofwands",
+      "Rey de Bastos": "kingofwands",
+      // Copas (Cups)
+      "As de Copas": "aceofcups",
+      "2 de Copas": "twoofcups",
+      "3 de Copas": "threeofcups",
+      "4 de Copas": "fourofcups",
+      "5 de Copas": "fiveofcups",
+      "6 de Copas": "sixofcups",
+      "7 de Copas": "sevenofcups",
+      "8 de Copas": "eightofcups",
+      "9 de Copas": "nineofcups",
+      "10 de Copas": "tenofcups",
+      "Sota de Copas": "pageofcups",
+      "Caballero de Copas": "knightofcups",
+      "Reina de Copas": "queenofcups",
+      "Rey de Copas": "kingofcups",
+      // Espadas (Swords)
+      "As de Espadas": "aceofswords",
+      "2 de Espadas": "twoofswords",
+      "3 de Espadas": "threeofswords",
+      "4 de Espadas": "fourofswords",
+      "5 de Espadas": "fiveofswords",
+      "6 de Espadas": "sixofswords",
+      "7 de Espadas": "sevenofswords",
+      "8 de Espadas": "eightofswords",
+      "9 de Espadas": "nineofswords",
+      "10 de Espadas": "tenofswords",
+      "Sota de Espadas": "pageofswords",
+      "Caballero de Espadas": "knightofswords",
+      "Reina de Espadas": "queenofswords",
+      "Rey de Espadas": "kingofswords",
+      // Oros (Pentacles)
+      "As de Oros": "aceofpentacles",
+      "2 de Oros": "twoofpentacles",
+      "3 de Oros": "threeofpentacles",
+      "4 de Oros": "fourofpentacles",
+      "5 de Oros": "fiveofpentacles",
+      "6 de Oros": "sixofpentacles",
+      "7 de Oros": "sevenofpentacles",
+      "8 de Oros": "eightofpentacles",
+      "9 de Oros": "nineofpentacles",
+      "10 de Oros": "tenofpentacles",
+      "Sota de Oros": "pageofpentacles",
+      "Caballero de Oros": "knightofpentacles",
+      "Reina de Oros": "queenofpentacles",
+      "Rey de Oros": "kingofpentacles"
+    };
+
+    const descripciones = {
+      "El Loco": "Nuevos comienzos, espontaneidad y fe en el futuro. Es momento de dar un salto de fe hacia lo desconocido, confiando en que el universo conspira a tu favor. Esta carta representa el espíritu libre que existe dentro de ti, aquel que no teme aventurarse por senderos inexplorados. El Loco te invita a liberarte de las limitaciones autoimpuestas y a abrazar la magia de la incertidumbre, pues es en estos momentos de vulnerabilidad donde nacen las más grandes transformaciones de tu alma.",
+      "El Mago": "Manifestación, poder personal y habilidad. Tienes todas las herramientas que necesitas para materializar tus sueños en la realidad. Como canal entre los mundos celestial y terrenal, posees la capacidad única de transformar pensamientos en acciones tangibles. El Mago te recuerda que eres el arquitecto de tu propio destino, dotado de una voluntad férrea y una conexión profunda con las fuerzas cósmicas. Es tiempo de reconocer tu poder interior y utilizarlo con sabiduría y propósito.",
+      "La Suma Sacerdotisa": "Intuición, misterio y sabiduría interior. Confía en tu voz interior, pues ella conoce verdades que la mente racional aún no puede comprender. Esta guardiana de los secretos ancestrales te invita a sumergirte en las profundidades de tu ser, donde reside una sabiduría milenaria que trasciende el tiempo y el espacio. La Suma Sacerdotisa representa el poder de lo femenino divino, la conexión con los ciclos lunares y la capacidad de percibir lo que permanece oculto tras el velo de la realidad aparente.",
+      "La Emperatriz": "Feminidad, belleza, naturaleza y abundancia. Un tiempo de creatividad y crecimiento florece ante ti como un jardín en primavera. Esta madre arquetípica representa la fuerza creativa del universo, la capacidad de nutrir y dar vida a nuevos proyectos y relaciones. La Emperatriz te conecta con los ritmos naturales de la Tierra, recordándote que eres parte de un ciclo eterno de creación y renovación. Su presencia anuncia un período de fertilidad en todos los aspectos de tu existencia, donde la belleza y la armonía se manifiestan naturalmente.",
+      "El Emperador": "Autoridad, estructura y control. Es momento de tomar las riendas de tu vida con la firmeza de un líder nato y la sabiduría de quien ha aprendido a gobernar con justicia. Esta figura paterna del tarot representa el poder de la organización, la disciplina y la capacidad de crear orden donde antes reinaba el caos. El Emperador te invita a establecer fundamentos sólidos para tus ambiciones, recordándote que el verdadero liderazgo nace de la responsabilidad hacia uno mismo y hacia los demás.",
+      "El Hierofante": "Tradición, conformidad y moralidad. Busca guía en las enseñanzas establecidas y en la sabiduría que han transmitido las generaciones anteriores. Este maestro espiritual representa el puente entre lo divino y lo humano, la importancia de los rituales sagrados y el valor de pertenecer a una comunidad de almas afines. El Hierofante te recuerda que no estás solo en tu camino espiritual, y que existe un conocimiento ancestral esperando ser redescubierto a través de la tradición y el estudio consciente de las verdades eternas.",
+      "Los Enamorados": "Amor, armonía y relaciones. Una decisión importante sobre el corazón te espera, una que definirá no solo tu futuro romántico, sino también tu crecimiento espiritual. Esta carta representa la unión sagrada de opuestos, la necesidad de elegir entre diferentes caminos del amor y la importancia de la comunicación auténtica en las relaciones. Los Enamorados te invitan a examinar tus valores más profundos y a tomar decisiones que estén alineadas con tu verdadero ser, recordándote que el amor verdadero comienza con el amor propio.",
+      "El Carro": "Control, fuerza de voluntad y victoria. Mantén el rumbo hacia tus objetivos con la determinación de un guerrero espiritual que ha aprendido a dominar las fuerzas opuestas dentro de sí mismo. Esta carta representa el triunfo sobre los obstáculos a través de la disciplina mental y la perseverancia. El Carro te recuerda que posees la capacidad de dirigir las energías conflictivas hacia un propósito común, alcanzando así una victoria que trasciende lo material para convertirse en una conquista del alma.",
+      "La Fuerza": "Fuerza interior, valentía y compasión. La gentileza puede ser más poderosa que la fuerza bruta, y el amor más transformador que el miedo. Esta carta representa el dominio de los instintos primitivos a través de la paciencia y la comprensión, no de la represión. La Fuerza te enseña que el verdadero poder reside en la capacidad de transformar la agresión en compasión, la ira en sabiduría, y el miedo en amor incondicional. Es un recordatorio de que posees una fuerza interior capaz de mover montañas sin usar la violencia.",
+      "El Ermitaño": "Búsqueda interior, introspección y guía. Es tiempo de mirar hacia adentro y encontrar la luz que siempre ha brillado en tu interior, esperando iluminar el camino de tu alma. Esta figura solitaria representa la necesidad del retiro espiritual, la importancia de la meditación y la búsqueda de respuestas en el silencio de tu corazón. El Ermitaño te invita a convertirte en tu propio maestro, a descubrir las verdades que solo pueden revelarse en la soledad sagrada, donde el ruido del mundo exterior se desvanece.",
+      "La Rueda de la Fortuna": "Buena suerte, karma y ciclos de la vida. Los cambios están llegando como olas inevitables del océano cósmico, trayendo consigo oportunidades para el crecimiento y la transformación. Esta carta representa la naturaleza cíclica de la existencia, la ley universal de causa y efecto, y la importancia de fluir con los ritmos naturales del destino. La Rueda de la Fortuna te recuerda que tanto la prosperidad como los desafíos son temporales, y que tu actitud ante estos cambios determinará la calidad de tu experiencia espiritual.",
+      "La Justicia": "Justicia, equidad y verdad. Las acciones tendrán sus consecuencias apropiadas, pues el universo mantiene un equilibrio perfecto donde cada acto encuentra su respuesta kármica. Esta guardiana del equilibrio cósmico representa la importancia de la integridad, la honestidad y la responsabilidad personal. La Justicia te invita a examinar tus motivaciones más profundas y a actuar desde un lugar de verdad absoluta, recordándote que las leyes universales operan más allá de las percepciones humanas de justicia e injusticia.",
+      "El Colgado": "Suspensión, restricción y sacrificio. A veces hay que soltar para avanzar, liberándose de las ataduras que nos mantienen suspendidos entre el cielo y la tierra. Esta figura invertida representa una pausa necesaria en el viaje del alma, un momento de rendición que paradójicamente conduce a la iluminación. El Colgado te enseña que la verdadera sabiduría a menudo requiere ver las situaciones desde una perspectiva completamente diferente, encontrando paz en la inmovilidad y crecimiento en la aparente restricción.",
+      "La Muerte": "Finales, transformación y transición. Un ciclo termina para que otro comience, en el eterno baile de muerte y renacimiento que caracteriza toda existencia. Esta carta no presagia destrucción física, sino la muerte simbólica de aspectos obsoletos de tu ser que ya no sirven a tu evolución espiritual. La Muerte te invita a abrazar el cambio con gracia, recordándote que cada final es también un nuevo comienzo, y que la resistencia al cambio solo prolonga el sufrimiento innecesario.",
+      "La Templanza": "Balance, paciencia y propósito. La moderación traerá armonía a tu vida, como un alquimista que mezcla elementos opuestos para crear oro espiritual. Esta carta representa el arte de encontrar el punto medio entre extremos, la capacidad de combinar fuerzas aparentemente incompatibles para crear algo completamente nuevo. La Templanza te enseña que la verdadera maestría reside en la paciencia, en la capacidad de fluir como el agua que encuentra su camino sin forzar las circunstancias.",
+      "El Diablo": "Atadura, adicción y restricción. Es hora de liberarte de lo que te limita, reconociendo que las cadenas más fuertes son aquellas que forjamos con nuestros propios miedos y creencias limitantes. Esta carta representa las ilusiones del ego, los apegos materiales que nos mantienen prisioneros de nuestros propios deseos. El Diablo te invita a enfrentar tus sombras con valentía, recordándote que el primer paso hacia la libertad es reconocer la naturaleza ilusoria de nuestras prisiones autoimpuestas.",
+      "La Torre": "Cambio súbito, agitación y revelación. Las estructuras falsas deben caer para que puedas construir sobre fundamentos más sólidos y auténticos. Esta carta representa el colapso necesario de ilusiones y construcciones mentales que ya no sirven a tu crecimiento espiritual. La Torre te recuerda que a veces el universo debe sacudirte violentamente para despertarte de un sueño que se ha convertido en pesadilla, liberándote para construir una nueva realidad más alineada con tu verdadero propósito.",
+      "La Estrella": "Esperanza, espiritualidad e inspiración. La luz al final del túnel aparece como una estrella guía en la oscuridad de la noche más profunda. Esta carta representa la renovación espiritual después de la crisis, la capacidad de encontrar significado y propósito incluso en las circunstancias más desafiantes. La Estrella te invita a reconectar con tu propósito divino, recordándote que eres tanto observador como participante en el gran teatro cósmico, y que tu luz interior puede iluminar el camino para otros.",
+      "La Luna": "Ilusión, miedo y ansiedad. No todo es lo que parece en la superficie, pues las aguas de la inconsciencia ocultan verdades que solo pueden revelarse bajo la luz plateada de la intuición. Esta carta representa el reino de los sueños, los miedos primitivos y las emociones que fluyen como mareas en la noche del alma. La Luna te invita a navegar por las aguas turbias de tu psique con compasión, recordándote que los miedos nocturnos pierden su poder cuando son iluminados por la luz de la conciencia.",
+      "El Sol": "Alegría, éxito y celebración. Un momento de felicidad pura te aguarda, irradiando la calidez transformadora de la luz solar que nutre toda forma de vida. Esta carta representa la culminación exitosa de un ciclo de crecimiento, la alegría que surge del reconocimiento de tu verdadera naturaleza divina. El Sol te invita a brillar sin reservas, recordándote que tu luz interior no solo te beneficia a ti, sino que también tiene el poder de iluminar y calentar los corazones de quienes te rodean.",
+      "El Juicio": "Juicio, renacimiento y despertar interior. Es hora de perdonar y seguir adelante, respondiendo al llamado de tu alma hacia una existencia más auténtica y consciente. Esta carta representa la resurrección espiritual, el momento en que despiertas a una nueva comprensión de tu propósito en la vida. El Juicio te invita a evaluar tu pasado con compasión, liberándote de culpas y resentimientos para poder renacer como una versión más elevada de ti mismo.",
+      "El Mundo": "Cumplimiento, logro y viaje completado. Has alcanzado una meta importante en tu desarrollo espiritual, completando un ciclo significativo de aprendizaje y crecimiento. Esta carta representa la integración exitosa de todas las lecciones aprendidas durante el viaje del alma, la sensación de plenitud que surge cuando logras alinearte completamente con tu propósito divino. El Mundo te celebra como un ser completo y realizado, preparado para comenzar un nuevo ciclo de evolución desde un nivel de conciencia más elevado.",
+      // Bastos
+      "As de Bastos": "Inspiración, nuevos proyectos y potencial creativo esperan manifestarse como la primera chispa de fuego sagrado que enciende la antorcha de tus ambiciones. Esta carta representa el momento mágico en que una idea toma forma en tu conciencia, cargada de toda la potencia necesaria para convertirse en realidad tangible. El As de Bastos te invita a confiar en tus impulsos creativos, recordándote que cada gran obra comienza con un simple destello de inspiración divina que busca expresarse a través de ti.",
+      "2 de Bastos": "Planificación futura y toma de decisiones. El mundo está en tus manos como un mapa de posibilidades infinitas esperando ser exploradas con sabiduría y determinación. Esta carta representa el poder de la visión clara y la capacidad de proyectar tus sueños hacia el futuro con precisión estratégica. El 2 de Bastos te recuerda que posees tanto la autoridad como la responsabilidad de elegir tu destino, invitándote a tomar decisiones audaces que reflejen la grandeza de tu alma.",
+      "3 de Bastos": "Expansión, previsión y oportunidades en el horizonte se acercan como barcos cargados de bendiciones navegando hacia tu puerto interior. Esta carta representa la manifestación inicial de tus esfuerzos, la primera confirmación de que tus planes están alineados con el flujo cósmico. El 3 de Bastos te invita a mantener la vista fija en el horizonte de tus posibilidades, recordándote que la paciencia y la perseverancia son las llaves que abren las puertas de la prosperidad.",
+      "4 de Bastos": "Celebración, armonía y estabilidad en el hogar traen alegría como flores que florecen en el jardín de tu corazón después de una larga temporada de siembra. Esta carta representa la culminación exitosa de esfuerzos colaborativos, la sensación de pertenencia y la seguridad que surge de haber construido bases sólidas. El 4 de Bastos te invita a celebrar los logros alcanzados en compañía de quienes amas, recordándote que la verdadera riqueza se encuentra en las relaciones que nutres con amor y dedicación.",
+      "5 de Bastos": "Desacuerdo, competencia y conflicto requieren diplomacia para resolverse, como guerreros honorables que buscan encontrar terreno común en medio de la batalla. Esta carta representa los desafíos que surgen cuando diferentes visiones chocan, la necesidad de defender tus ideas sin perder de vista el objetivo común. El 5 de Bastos te recuerda que la competencia saludable puede ser un catalizador para el crecimiento, invitándote a mantener tu integridad mientras navegas por las aguas turbulentas del conflicto constructivo.",
+      "6 de Bastos": "Victoria, reconocimiento público y éxito bien merecido llegan como una corona de laureles que corona tus esfuerzos con la gloria que solo otorga el trabajo honesto. Esta carta representa el triunfo sobre los obstáculos, el momento en que tus talentos son finalmente reconocidos por la comunidad. El 6 de Bastos te invita a recibir los honores con humildad, recordándote que el verdadero liderazgo consiste en inspirar a otros a alcanzar su propia grandeza.",
+      "7 de Bastos": "Desafío, perseverancia y defensa de tu posición con valentía, como un guerrero solitario que protege su territorio sagrado contra todas las adversidades. Esta carta representa la necesidad de mantenerte firme en tus convicciones, incluso cuando te sientes superado en número por las fuerzas opositoras. El 7 de Bastos te recuerda que posees una fortaleza interior capaz de resistir cualquier embate, invitándote a confiar en tu capacidad de superar los desafíos más formidables.",
+      "8 de Bastos": "Velocidad, movimiento rápido y comunicación acelerada están en camino como flechas de luz que atraviesan el espacio llevando mensajes de transformación. Esta carta representa el momento en que las energías se alinean para crear un progreso súbito e inesperado en tus proyectos. El 8 de Bastos te invita a estar preparado para actuar con rapidez, recordándote que las oportunidades a menudo llegan disfrazadas de cambios repentinos que requieren respuestas inmediatas.",
+      "9 de Bastos": "Resistencia, persistencia y fuerza para el último empujón hacia la meta, como un corredor que encuentra una reserva final de energía en los metros decisivos de la carrera. Esta carta representa la determinación necesaria para superar los obstáculos finales que se interponen entre tú y tus objetivos. El 9 de Bastos te recuerda que la victoria a menudo se decide en los momentos de mayor fatiga, invitándote a encontrar esa chispa de coraje que te llevará hasta la línea de llegada.",
+      "10 de Bastos": "Carga pesada, responsabilidad y el final de un ciclo agotador que ha puesto a prueba todos los límites de tu resistencia física y espiritual. Esta carta representa el peso del éxito, el momento en que los logros se convierten en responsabilidades que deben ser gestionadas con sabiduría. El 10 de Bastos te invita a evaluar qué cargas son verdaderamente tuyas y cuáles pueden ser compartidas, recordándote que el verdadero poder reside en saber cuándo delegar y cuándo perseverar.",
+      "Sota de Bastos": "Exploración, emoción y la búsqueda aventurera de nuevas experiencias que alimentan el fuego eterno de tu curiosidad juvenil. Esta carta representa el espíritu del explorador que existe dentro de ti, siempre dispuesto a descubrir territorios inexplorados de la experiencia humana. La Sota de Bastos te invita a mantener viva la llama de la aventura, recordándote que cada día ofrece oportunidades para aprender algo nuevo y expandir los horizontes de tu comprensión.",
+      "Caballero de Bastos": "Impulsividad, aventura y pasión ardiente guían tus acciones como un jinete del viento que cabalga hacia el amanecer sin mirar atrás. Esta carta representa la energía del pionero, la necesidad de actuar según tus impulsos más auténticos sin ser paralizado por el exceso de análisis. El Caballero de Bastos te recuerda que a veces la acción espontánea es más sabia que la planificación excesiva, invitándote a confiar en la sabiduría de tu instinto aventurero.",
+      "Reina de Bastos": "Coraje, determinación y liderazgo carismático inspiran a otros como una antorcha viviente que ilumina el camino para quienes han perdido su rumbo. Esta carta representa el poder femenino expresado a través de la acción decidida, la capacidad de nutrir a otros mientras mantienes tu independencia y fuerza personal. La Reina de Bastos te invita a liderar con el corazón abierto, recordándote que el verdadero poder reside en empoderar a otros para que encuentren su propia luz interior.",
+      "Rey de Bastos": "Liderazgo natural, visión empresarial y control de la situación como un monarca sabio que gobierna su reino con justicia y visión de futuro. Esta carta representa la maestría en el ámbito de la acción, la capacidad de transformar ideas en imperios a través de la determinación y la sabiduría estratégica. El Rey de Bastos te recuerda que el verdadero liderazgo nace del servicio a algo más grande que uno mismo, invitándote a usar tus talentos para crear legados que beneficien a las generaciones futuras.",
+      // Copas
+      "As de Copas": "Nuevo amor, compasión y abundancia emocional florecen en tu vida como un manantial sagrado que brota del corazón de la existencia misma. Esta carta representa la apertura del chakra del corazón, la capacidad de amar y ser amado sin condiciones ni reservas. El As de Copas te invita a beber de las aguas cristalinas del amor incondicional, recordándote que cuando tu corazón está lleno, naturalmente se desborda bendiciendo todo lo que toca con su dulce néctar.",
+      "2 de Copas": "Amor mutuo, asociación y conexión profunda con otra persona que trasciende las barreras del ego para crear un vínculo sagrado entre dos almas. Esta carta representa la unión perfecta de corazones que se reconocen mutuamente como reflejos divinos, la capacidad de ver en el otro un aspecto de tu propia esencia divina. El 2 de Copas te invita a experimentar el amor como un sacramento, recordándote que las relaciones auténticas son oportunidades para el crecimiento espiritual mutuo.",
+      "3 de Copas": "Celebración, amistad y alegría compartida con seres queridos que forman el círculo sagrado de tu tribu espiritual en esta encarnación. Esta carta representa la bendición de la comunidad, el poder sanador de la risa compartida y la importancia de celebrar los momentos de felicidad con quienes aman tu alma. El 3 de Copas te recuerda que la alegría se multiplica cuando se comparte, invitándote a abrir tu corazón a las conexiones auténticas que nutren tu espíritu.",
+      "4 de Copas": "Apatía, contemplación y oportunidades perdidas por desinterés, como un alma que se ha desconectado temporalmente de la fuente de su propia pasión. Esta carta representa un período de introspección necesaria, la sensación de estar emocionalmente desconectado de las ofertas que la vida presenta. El 4 de Copas te invita a examinar qué está causando tu descontento, recordándote que a veces la aparente apatía es en realidad una invitación a buscar significado más profundo.",
+      "5 de Copas": "Tristeza, pérdida y lamento, pero la esperanza aún permanece como estrellas que brillan en la noche más oscura del alma humana. Esta carta representa el proceso natural del duelo, la necesidad de honrar lo que se ha perdido antes de poder recibir lo que está por llegar. El 5 de Copas te recuerda que las lágrimas son el agua que nutre el jardín del corazón, preparando el terreno para que florezcan nuevas posibilidades de amor y conexión.",
+      "6 de Copas": "Nostalgia, recuerdos dulces y reconexión con el pasado feliz que vive eternamente en el altar de tu corazón como tesoros de oro emocional. Esta carta representa el poder sanador de los recuerdos amorosos, la capacidad de encontrar consuelo en las experiencias pasadas de felicidad y conexión. El 6 de Copas te invita a honrar tu historia personal, recordándote que el niño interior que llevas dentro posee una sabiduría pura que puede iluminar tu camino presente.",
+      "7 de Copas": "Ilusiones, fantasías y demasiadas opciones crean confusión como espejismos en el desierto de la indecisión emocional que nublan tu visión. Esta carta representa el peligro de perderse en mundos imaginarios, la necesidad de distinguir entre sueños inspiradores y fantasías escapistas. El 7 de Copas te invita a cultivar el discernimiento emocional, recordándote que no todas las opciones que se presentan ante ti son realmente viables o beneficiosas para tu crecimiento espiritual.",
+      "8 de Copas": "Abandono, búsqueda espiritual y dejar atrás lo insatisfactorio como un peregrino que abandona las comodidades conocidas en busca de verdades más profundas. Esta carta representa el coraje de soltar lo que ya no nutre tu alma, incluso cuando significa caminar solo hacia territorios desconocidos. El 8 de Copas te recuerda que a veces el crecimiento espiritual requiere dejar atrás situaciones que parecían seguras pero que se han vuelto limitantes para tu evolución.",
+      "9 de Copas": "Satisfacción, placer y realización de deseos del corazón como un banquete celestial preparado especialmente para celebrar tu abundancia emocional. Esta carta representa la manifestación de tus anhelos más profundos, el momento en que el universo conspira para otorgarte exactamente lo que tu alma ha estado pidiendo. El 9 de Copas te invita a recibir las bendiciones con gratitud, recordándote que mereces toda la felicidad que llega a tu vida.",
+      "10 de Copas": "Felicidad, armonía familiar y realización emocional completa como un arcoíris que aparece después de la tormenta para bendecir tu hogar con colores celestiales. Esta carta representa la culminación perfecta de tus búsquedas emocionales, la sensación de estar exactamente donde necesitas estar rodeado de quienes realmente importan. El 10 de Copas te recuerda que la verdadera riqueza se mide en momentos de amor compartido y conexiones auténticas que trascienden el tiempo.",
+      "Sota de Copas": "Creatividad, intuición y mensajes del corazón llegan a ti como susurros angelicales que despiertan la sensibilidad artística dormida en tu alma. Esta carta representa la pureza de la expresión emocional, la capacidad de canalizar sentimientos profundos a través de formas creativas de comunicación. La Sota de Copas te invita a confiar en tus impulsos artísticos, recordándote que tu sensibilidad es un don que puede tocar y transformar los corazones de otros.",
+      "Caballero de Copas": "Romance, encanto y la llegada de propuestas emocionales que despiertan mariposas en tu estómago y melodías en tu corazón como un trovador celestial. Esta carta representa el aspecto romántico de tu naturaleza, la capacidad de ver la belleza y el potencial amoroso en cada encuentro humano. El Caballero de Copas te recuerda que el amor verdadero a menudo llega disfrazado de gestos simples pero profundamente significativos que tocan el alma.",
+      "Reina de Copas": "Compasión, intuición y cuidado maternal nutren tu entorno como una madre divina que abraza a todos sus hijos con amor incondicional y sabiduría infinita. Esta carta representa la maestría emocional, la capacidad de mantener el corazón abierto incluso en medio de las tormentas de la vida. La Reina de Copas te invita a ser un refugio de paz para otros, recordándote que tu capacidad de amar y comprender es un regalo sagrado que sana el mundo.",
+      "Rey de Copas": "Control emocional, diplomacia y sabiduría del corazón guían tus decisiones como un sabio que ha aprendido a navegar las aguas profundas de la experiencia humana. Esta carta representa la madurez emocional, la capacidad de mantener la calma en medio de las tormentas emocionales mientras ofreces consejo sabio a quienes lo necesitan. El Rey de Copas te recuerda que el verdadero poder reside en la capacidad de amar sin perderte en el proceso.",
+      // Espadas
+      "As de Espadas": "Nueva claridad mental, verdad revelada y poder del pensamiento que corta a través de las ilusiones como una espada de luz divina. Esta carta representa el despertar de la mente superior, la capacidad de percibir la realidad sin los filtros del condicionamiento y la ilusión. El As de Espadas te invita a empuñar el poder de la verdad con responsabilidad, recordándote que la claridad mental es un don que debe ser usado para servir al bien mayor y no solo para beneficio personal.",
+      "2 de Espadas": "Decisión difícil, equilibrio precario y conflicto interno por resolver entre las voces contradictorias que habitan en el parlamento de tu mente consciente. Esta carta representa el momento en que debes elegir entre dos caminos igualmente válidos, la necesidad de encontrar balance entre la lógica y la intuición. El 2 de Espadas te recuerda que algunas decisiones requieren tiempo y contemplación, invitándote a confiar en que la respuesta correcta emergerá cuando estés verdaderamente listo para recibirla.",
+      "3 de Espadas": "Desamor, dolor emocional y traición que requiere sanación como heridas del corazón que deben ser atendidas con compasión y paciencia infinita. Esta carta representa las lecciones más difíciles del amor, los momentos en que el corazón se quiebra para poder expandirse hacia una capacidad mayor de compasión. El 3 de Espadas te recuerda que el dolor es el precio que pagamos por amar profundamente, invitándote a encontrar el regalo escondido en cada experiencia de pérdida.",
+      "4 de Espadas": "Descanso, meditación y pausa necesaria para recuperar fuerzas como un guerrero sabio que sabe cuándo retirarse para regenerar su espíritu. Esta carta representa la importancia del retiro consciente, la necesidad de crear espacios de silencio donde la mente pueda procesar las experiencias acumuladas. El 4 de Espadas te invita a honrar tus ritmos naturales de actividad y descanso, recordándote que la renovación es esencial para mantener la claridad mental.",
+      "5 de Espadas": "Derrota, conflicto y victoria pírrica que deja cicatrices en el alma como batallas ganadas al precio de perder la propia integridad espiritual. Esta carta representa las consecuencias de elegir la victoria sobre la compasión, la sensación vacía que queda después de triunfar usando métodos cuestionables. El 5 de Espadas te recuerda que no todas las batallas merecen ser peleadas, invitándote a evaluar si tus métodos están alineados con tus valores más profundos.",
+      "6 de Espadas": "Transición, mudanza y viaje hacia aguas más tranquilas como un barco que navega lejos de tormentas pasadas hacia horizontes de mayor paz. Esta carta representa el movimiento consciente hacia situaciones más favorables, la capacidad de aprender de experiencias difíciles sin quedar atrapado en ellas. El 6 de Espadas te recuerda que tienes el poder de cambiar tu entorno cuando ya no sirve a tu crecimiento, invitándote a tener fe en que existen lugares más armoniosos esperando tu llegada.",
+      "7 de Espadas": "Engaño, estrategia y acciones sigilosas que requieren cuidado como un espía que camina por la cuerda floja entre la supervivencia y la integridad moral. Esta carta representa la necesidad de ser astuto sin perder tu brújula ética, la capacidad de navegar situaciones complejas donde la honestidad total podría ser contraproducente. El 7 de Espadas te invita a examinar tus motivaciones más profundas, recordándote que la verdadera inteligencia reside en encontrar soluciones que beneficien a todos los involucrados.",
+      "8 de Espadas": "Restricción, sentirse atrapado y limitaciones autoimpuestas como cadenas invisibles forjadas por tus propios pensamientos y creencias limitantes sobre lo que es posible. Esta carta representa la prisión mental que creamos cuando permitimos que el miedo dicte nuestras decisiones y posibilidades. El 8 de Espadas te recuerda que la mayoría de las limitaciones que experimentas existen solo en tu mente, invitándote a cuestionar las creencias que te mantienen pequeño y a dar el primer paso hacia tu liberación.",
+      "9 de Espadas": "Ansiedad, pesadillas y preocupaciones que magnifican los miedos como sombras que crecen desproporcionadamente en la oscuridad de la noche del alma. Esta carta representa el tormento mental que surge cuando permitimos que los pensamientos negativos dominen nuestra experiencia interior. El 9 de Espadas te invita a examinar la diferencia entre los peligros reales y los imaginarios, recordándote que la mayoría de nuestros sufrimientos provienen de situaciones que existen solo en nuestra mente.",
+      "10 de Espadas": "Ruina, traición y final doloroso, pero también nuevo amanecer como la noche más oscura que precede al alba de una nueva comprensión espiritual. Esta carta representa el colapso total de estructuras mentales obsoletas, el momento en que todas las ilusiones se desmoronan para revelar la verdad desnuda. El 10 de Espadas te recuerda que incluso en los momentos de mayor desolación, las semillas de una nueva vida ya están germinando bajo la superficie, esperando su momento para florecer.",
+      "Sota de Espadas": "Vigilancia, curiosidad y energía mental juvenil explora ideas como un detective espiritual que busca pistas sobre los misterios más profundos de la existencia. Esta carta representa la mente inquisitiva que no acepta respuestas superficiales, la capacidad de hacer preguntas que otros evitan por miedo a las respuestas. La Sota de Espadas te invita a mantener viva tu curiosidad intelectual, recordándote que cada pregunta sincera es una llave que puede abrir puertas hacia nuevas dimensiones de comprensión.",
+      "Caballero de Espadas": "Ambición, prisa y acción directa sin considerar consecuencias como un guerrero que carga hacia la batalla con más valor que prudencia. Esta carta representa la energía del pionero intelectual, la capacidad de actuar según tus convicciones sin ser paralizado por el exceso de análisis. El Caballero de Espadas te recuerda que a veces la acción decidida es más valiosa que la planificación perfecta, invitándote a encontrar el equilibrio entre la determinación y la sabiduría.",
+      "Reina de Espadas": "Independencia, inteligencia aguda y comunicación clara y directa como una maestra que enseña verdades difíciles con compasión pero sin comprometer la honestidad. Esta carta representa la sabiduría que surge de haber atravesado tormentas emocionales y haber emergido con una comprensión cristalina de la naturaleza humana. La Reina de Espadas te invita a hablar tu verdad con gracia, recordándote que la honestidad compasiva es un regalo que ofreces tanto a ti mismo como a otros.",
+      "Rey de Espadas": "Autoridad intelectual, verdad y juicio claro guían decisiones como un juez sabio que pesa cada evidencia con imparcialidad absoluta y sabiduría madura. Esta carta representa la maestría del pensamiento lógico combinado con la experiencia de vida, la capacidad de tomar decisiones difíciles basadas en principios sólidos. El Rey de Espadas te recuerda que el verdadero liderazgo intelectual requiere tanto conocimiento como compasión, invitándote a usar tu sabiduría para servir al bien común.",
+      // Oros
+      "As de Oros": "Nueva oportunidad financiera, manifestación y abundancia material como una semilla dorada plantada en el suelo fértil de tus esfuerzos conscientes. Esta carta representa el inicio de un nuevo ciclo de prosperidad, la capacidad de transformar ideas en riqueza tangible a través del trabajo dedicado. El As de Oros te invita a reconocer las oportunidades que se presentan disfrazadas de trabajo, recordándote que la verdadera abundancia fluye cuando alineas tus talentos con las necesidades del mundo.",
+      "2 de Oros": "Balance múltiple, flexibilidad y malabarismo de responsabilidades como un artista del equilibrio que mantiene varias pelotas en el aire simultáneamente. Esta carta representa la habilidad de gestionar múltiples proyectos sin perder de vista las prioridades esenciales, la capacidad de adaptarse a circunstancias cambiantes con gracia y eficiencia. El 2 de Oros te recuerda que la flexibilidad es una fortaleza, invitándote a encontrar ritmo y armonía en medio de la multiplicidad de demandas.",
+      "3 de Oros": "Colaboración, trabajo en equipo y construcción conjunta de proyectos como artesanos que combinan sus habilidades únicas para crear obras maestras. Esta carta representa el poder de la sinergia, la magia que surge cuando individuos talentosos se unen con un propósito común más grande que sus ambiciones personales. El 3 de Oros te invita a reconocer el valor de la colaboración, recordándote que los logros más significativos raramente son el resultado del esfuerzo solitario.",
+      "4 de Oros": "Conservación, seguridad y aferrarse demasiado a posesiones materiales como un guardián que protege su tesoro pero se olvida de disfrutarlo y compartirlo. Esta carta representa la tendencia humana a buscar seguridad a través de la acumulación, el miedo a la escasez que puede convertirse en avaricia. El 4 de Oros te invita a examinar tu relación con la riqueza material, recordándote que la verdadera seguridad proviene de la confianza en tu capacidad de crear abundancia, no de aferrarte a lo que ya tienes.",
+      "5 de Oros": "Pérdida financiera, pobreza y sensación de exclusión material como almas que vagan en el frío de la carencia sin reconocer las oportunidades de ayuda disponibles. Esta carta representa los momentos de crisis económica que ponen a prueba tu fe en la abundancia del universo, la sensación temporal de estar desconectado de la fuente de prosperidad. El 5 de Oros te recuerda que incluso en la escasez aparente, las semillas de la recuperación ya están presentes, invitándote a buscar apoyo y a mantener la esperanza.",
+      "6 de Oros": "Generosidad, caridad y equilibrio entre dar y recibir recursos como un río que fluye naturalmente compartiendo sus aguas con todos los que tienen sed. Esta carta representa la ley universal del intercambio justo, la comprensión de que la abundancia se multiplica cuando se comparte con corazón abierto. El 6 de Oros te invita a examinar tus patrones de dar y recibir, recordándote que tanto la generosidad como la receptividad son aspectos esenciales del flujo natural de la abundancia.",
+      "7 de Oros": "Evaluación, paciencia y espera por los frutos del trabajo como un jardinero sabio que conoce los tiempos de siembra, crecimiento y cosecha. Esta carta representa la necesidad de confiar en los procesos naturales de manifestación, la sabiduría de permitir que los proyectos maduren en su propio tiempo. El 7 de Oros te recuerda que la impaciencia puede arruinar incluso los esfuerzos más prometedores, invitándote a cultivar la fe en que tus inversiones de tiempo y energía eventualmente darán fruto.",
+      "8 de Oros": "Dedicación, maestría y perfeccionamiento de habilidades laborales como un artesano que transforma materiales ordinarios en obras de arte a través de la práctica devota. Esta carta representa el camino del maestro, la comprensión de que la excelencia se alcanza a través de la repetición consciente y la mejora continua. El 8 de Oros te invita a encontrar alegría en el proceso de perfeccionamiento, recordándote que el trabajo realizado con amor y atención se convierte en una forma de meditación activa.",
+      "9 de Oros": "Abundancia, lujo y disfrute de logros materiales alcanzados como un jardinero que finalmente puede disfrutar de los frutos de años de cultivo paciente. Esta carta representa la capacidad de recibir y disfrutar la prosperidad sin culpa, la comprensión de que mereces experimentar la belleza y la comodidad que has trabajado para crear. El 9 de Oros te recuerda que la abundancia es tu derecho divino, invitándote a celebrar tus logros y a compartir tu prosperidad con generosidad.",
+      "10 de Oros": "Riqueza, herencia familiar y seguridad financiera establecida permanentemente como un árbol genealógico que da frutos para las generaciones presentes y futuras. Esta carta representa la culminación de esfuerzos multigeneracionales, la capacidad de crear legados que trascienden tu propia existencia temporal. El 10 de Oros te invita a pensar en términos de impacto a largo plazo, recordándote que la verdadera riqueza se mide en la capacidad de bendecir a otros incluso después de tu partida.",
+      "Sota de Oros": "Manifestación, estudio y oportunidades prácticas para el crecimiento como un aprendiz entusiasta que descubre nuevas formas de convertir conocimiento en riqueza tangible. Esta carta representa el comienzo del camino hacia la maestría material, la disposición de aprender las habilidades necesarias para crear abundancia en el mundo físico. La Sota de Oros te invita a mantener una mente de principiante, recordándote que cada nueva habilidad adquirida es una llave que puede abrir puertas hacia la prosperidad.",
+      "Caballero de Oros": "Eficiencia, trabajo duro y progreso constante hacia metas como un labrador que ara la tierra con determinación inquebrantable, confiando en que cada surco lo acerca a la cosecha. Esta carta representa la virtud de la perseverancia, la capacidad de mantener el rumbo incluso cuando el progreso parece lento o invisible. El Caballero de Oros te recuerda que los logros más sólidos se construyen paso a paso, invitándote a encontrar satisfacción en el proceso tanto como en los resultados.",
+      "Reina de Oros": "Practicidad, generosidad y cuidado material del entorno familiar como una madre tierra que nutre a todos sus hijos con abundancia infinita y sabia administración. Esta carta representa la maestría en la gestión de recursos, la capacidad de crear prosperidad mientras mantienes un hogar amoroso y acogedor. La Reina de Oros te invita a encontrar el equilibrio entre el éxito material y la riqueza emocional, recordándote que la verdadera prosperidad incluye la capacidad de cuidar y ser cuidado.",
+      "Rey de Oros": "Abundancia, seguridad financiera y éxito empresarial consolidado como un monarca sabio que ha transformado su reino en un oasis de prosperidad y estabilidad para todos. Esta carta representa la maestría completa en los asuntos materiales, la capacidad de crear y mantener riqueza mientras usas tu influencia para el beneficio de tu comunidad. El Rey de Oros te recuerda que el verdadero poder financiero viene acompañado de la responsabilidad de usar esa riqueza para elevar a otros y crear un impacto positivo duradero."
+    };
+
+    function barajarConSemilla(array, semilla) {
+      let a = array.slice();
+      let aleatorio = mulberry32(semilla);
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(aleatorio() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function mulberry32(semilla) {
+      return function() {
+        let t = semilla += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    function obtenerNumeroSemana(fecha) {
+      const d = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()));
+      const diaNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - diaNum);
+      const inicioAno = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      return Math.ceil((((d - inicioAno) / 86400000) + 1)/7);
+    }
+
+    function obtenerUrlImagen(nombreCarta) {
+      const archivo = nombreAArchivo[nombreCarta];
+      if (archivo) {
+        return `https://raw.githubusercontent.com/krates98/tarotcardapi/refs/heads/main/images/${archivo}.jpeg`;
+      }
+      return ''; // Imagen por defecto o vacía si no se encuentra
+    }
+
+    function obtenerLecturasTarot() {
+      const hoy = new Date();
+      const ano = hoy.getFullYear();
+      const semana = obtenerNumeroSemana(hoy);
+      const diaDelAno = Math.floor((hoy - new Date(hoy.getFullYear(), 0, 0)) / 86400000);
+
+      // Carta semanal: semilla por año + semana
+      const semillaSemana = ano * 100 + semana;
+      const mazoSemanal = barajarConSemilla(mazoTarot, semillaSemana);
+      const cartaSemanal = mazoSemanal[semana % mazoSemanal.length];
+
+      // Cartas diarias: semilla por año + día
+      const semillaDia = ano * 1000 + diaDelAno;
+      const mazoDiario = barajarConSemilla(mazoTarot, semillaDia);
+      const cartasDiarias = mazoDiario.slice(0, 3);
+
+      return { cartaSemanal, cartasDiarias };
+    }
+
+    const lecturas = obtenerLecturasTarot();
+
+    // Carta semanal
+    const cartaSemanalEl = document.getElementById("weekly");
+    const cardInnerSemanal = cartaSemanalEl.querySelector('.card-inner');
+    const imagenSemanal = cartaSemanalEl.querySelector('.card-back-image');
+    const nombreSemanal = cartaSemanalEl.querySelector('.card-name');
+    const descripcionSemanal = cartaSemanalEl.querySelector('.card-description');
+    
+    imagenSemanal.src = obtenerUrlImagen(lecturas.cartaSemanal);
+    imagenSemanal.alt = lecturas.cartaSemanal;
+    nombreSemanal.textContent = lecturas.cartaSemanal;
+    descripcionSemanal.textContent = descripciones[lecturas.cartaSemanal] || "Una carta llena de misterio y sabiduría antigua.";
+
+    // Evento click para carta semanal
+    cartaSemanalEl.addEventListener('click', function() {
+      cardInnerSemanal.classList.toggle('flipped');
+    });
+
+    // Cartas diarias
+    const contenedorDiario = document.getElementById("daily");
+    lecturas.cartasDiarias.forEach((carta, index) => {
+      const div = document.createElement("div");
+      div.className = "daily-card";
+      
+      const cardInner = document.createElement("div");
+      cardInner.className = "card-inner";
+      
+      // Cara trasera con imagen
+      const cardBack = document.createElement("div");
+      cardBack.className = "card-face card-back";
+      
+      const imagen = document.createElement("img");
+      imagen.className = "card-back-image";
+      imagen.src = obtenerUrlImagen(carta);
+      imagen.alt = carta;
+      imagen.loading = "lazy";
+      
+      cardBack.appendChild(imagen);
+      
+      // Cara frontal con texto
+      const cardFront = document.createElement("div");
+      cardFront.className = "card-face card-front";
+      
+      const nombre = document.createElement("div");
+      nombre.className = "card-name";
+      nombre.textContent = carta;
+      
+      const descripcion = document.createElement("div");
+      descripcion.className = "card-description";
+      descripcion.textContent = descripciones[carta] || "Una carta llena de misterio y sabiduría antigua.";
+      
+      cardFront.appendChild(nombre);
+      cardFront.appendChild(descripcion);
+      
+      cardInner.appendChild(cardBack);
+      cardInner.appendChild(cardFront);
+      div.appendChild(cardInner);
+      
+      // Evento click para voltear carta
+      div.addEventListener('click', function() {
+        cardInner.classList.toggle('flipped');
+      });
+      
+      contenedorDiario.appendChild(div);
+    });
+  </script>
+</body>
+</html>

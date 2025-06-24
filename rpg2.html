@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Gatos Gladiadores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(45deg, #1a0033, #330066, #660099);
+            color: #00ffff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 100vw;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover, .tab.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #330066, #660099);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .combat-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .fighter {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .fighter-emoji {
+            font-size: 60px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #ffff00;
+        }
+
+        .health-bar {
+            width: 100px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 5px auto;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+            transition: width 0.3s ease;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .upgrade-card {
+            background: rgba(51, 0, 102, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ff00ff;
+            text-align: center;
+        }
+
+        .cat-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .cat-card {
+            background: rgba(102, 0, 153, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .location-tile {
+            aspect-ratio: 1;
+            background: rgba(51, 0, 102, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .location-tile:hover {
+            background: rgba(102, 0, 153, 0.8);
+            transform: scale(1.05);
+        }
+
+        .location-tile.conquered {
+            border-color: #00ff00;
+            background: rgba(0, 153, 0, 0.3);
+        }
+
+        .location-tile.current {
+            border-color: #ffff00;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+        }
+
+        .enemy-selector {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .enemy-option {
+            background: rgba(51, 0, 102, 0.8);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin: 5px;
+        }
+
+        .enemy-option:hover, .enemy-option.selected {
+            border-color: #00ffff;
+            background: rgba(102, 0, 153, 0.8);
+            transform: scale(1.05);
+        }
+
+        .combat-log {
+            height: 150px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .fighter-emoji {
+                font-size: 40px;
+            }
+            
+            .combat-area {
+                flex-direction: column;
+            }
+            
+            .map-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body ontouchstart="">
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ GATOS GLADIADORES 🏛️</h1>
+            <p>Arena de Combate Retro</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('combat')">⚔️ Combate</button>
+            <button class="tab" onclick="showTab('upgrades')">⬆️ Mejoras</button>
+            <button class="tab" onclick="showTab('cats')">🐱 Gatos</button>
+            <button class="tab" onclick="showTab('map')">🗺️ Mapa</button>
+            <button class="tab" onclick="showTab('explore')">🏔️ Explorar</button>
+        </div>
+
+        <!-- Combat Tab -->
+        <div id="combat" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <div>💰 Oro: <span id="gold">100</span></div>
+                </div>
+                <div class="stat-card">
+                    <div>🏆 Gloria: <span id="glory">0</span></div>
+                </div>
+                <div class="stat-card">
+                    <div>🎯 Nivel: <span id="level">1</span></div>
+                </div>
+                <div class="stat-card">
+                    <div>📍 <span id="current-location">Arena Novato</span></div>
+                </div>
+            </div>
+
+            <div class="enemy-selector">
+                <div class="enemy-option selected" data-difficulty="easy">
+                    <div style="font-size: 30px;">😺</div>
+                    <div>Fácil</div>
+                    <div>💰 +20 | 🏆 +5</div>
+                </div>
+                <div class="enemy-option" data-difficulty="medium">
+                    <div style="font-size: 30px;">😾</div>
+                    <div>Medio</div>
+                    <div>💰 +40 | 🏆 +15</div>
+                </div>
+                <div class="enemy-option" data-difficulty="hard">
+                    <div style="font-size: 30px;">🐯</div>
+                    <div>Difícil</div>
+                    <div>💰 +80 | 🏆 +35</div>
+                </div>
+            </div>
+
+            <div class="combat-area">
+                <div class="fighter">
+                    <div class="fighter-emoji" id="player-emoji">😼</div>
+                    <div>TÚ</div>
+                    <div class="health-bar">
+                        <div class="health-fill" id="player-health" style="width: 100%"></div>
+                    </div>
+                    <div>❤️ <span id="player-hp">100</span>/100</div>
+                </div>
+
+                <div style="font-size: 40px; margin: 0 20px;">⚔️</div>
+
+                <div class="fighter">
+                    <div class="fighter-emoji" id="enemy-emoji">😺</div>
+                    <div>ENEMIGO</div>
+                    <div class="health-bar">
+                        <div class="health-fill" id="enemy-health" style="width: 100%"></div>
+                    </div>
+                    <div>❤️ <span id="enemy-hp">80</span>/80</div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="button" id="fight-btn" onclick="startCombat()">🗡️ COMBATIR</button>
+                <button class="button" onclick="challengeChampion()" id="champion-btn">👑 Desafiar Campeón</button>
+            </div>
+
+            <div class="combat-log" id="combat-log"></div>
+        </div>
+
+        <!-- Upgrades Tab -->
+        <div id="upgrades" class="tab-content">
+            <h2>🛠️ Mejoras del Gladiador</h2>
+            <div class="upgrade-grid" id="upgrade-grid">
+                <div class="upgrade-card">
+                    <h3>🗡️ Daño de Ataque</h3>
+                    <p>Nivel: <span id="damage-level">1</span></p>
+                    <p>Daño: <span id="damage-value">10</span></p>
+                    <button class="button" onclick="buyUpgrade('damage')">
+                        Mejorar (💰 <span id="damage-cost">50</span>)
+                    </button>
+                </div>
+                <div class="upgrade-card">
+                    <h3>⚡ Velocidad Ataque</h3>
+                    <p>Nivel: <span id="speed-level">1</span></p>
+                    <p>Velocidad: <span id="speed-value">1.0</span>s</p>
+                    <button class="button" onclick="buyUpgrade('speed')">
+                        Mejorar (💰 <span id="speed-cost">75</span>)
+                    </button>
+                </div>
+                <div class="upgrade-card">
+                    <h3>🛡️ Defensa</h3>
+                    <p>Nivel: <span id="defense-level">1</span></p>
+                    <p>Reducción: <span id="defense-value">5</span>%</p>
+                    <button class="button" onclick="buyUpgrade('defense')">
+                        Mejorar (💰 <span id="defense-cost">60</span>)
+                    </button>
+                </div>
+                <div class="upgrade-card">
+                    <h3>❤️ Vida Máxima</h3>
+                    <p>Nivel: <span id="health-level">1</span></p>
+                    <p>Vida: <span id="health-value">100</span></p>
+                    <button class="button" onclick="buyUpgrade('health')">
+                        Mejorar (💰 <span id="health-cost">40</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cats Tab -->
+        <div id="cats" class="tab-content">
+            <h2>🐱 Contratación de Gatos</h2>
+            <div style="margin-bottom: 20px;">
+                <button class="button" onclick="hireCat()">Contratar Gato (💰 200)</button>
+                <button class="button" onclick="sendCatsToFight()">Enviar Gatos a Combate</button>
+            </div>
+            <div class="cat-list" id="cat-list"></div>
+        </div>
+
+        <!-- Map Tab -->
+        <div id="map" class="tab-content">
+            <h2>🗺️ Mapa de Arenas</h2>
+            <div class="map-grid" id="map-grid"></div>
+        </div>
+
+        <!-- Explore Tab -->
+        <div id="explore" class="tab-content">
+            <h2>🏔️ Exploración Peligrosa</h2>
+            <p style="color: #ff6666; margin-bottom: 20px;">⚠️ ¡Cuidado! Los gatos pueden morir en la exploración</p>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="button" onclick="exploreArea('forest')">🌲 Explorar Bosque</button>
+                <button class="button" onclick="exploreArea('mountain')">🏔️ Explorar Montaña</button>
+                <button class="button" onclick="exploreArea('desert')">🏜️ Explorar Desierto</button>
+            </div>
+            <div id="exploration-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            gold: 100,
+            glory: 0,
+            level: 1,
+            currentLocation: 0,
+            playerStats: {
+                maxHp: 100,
+                hp: 100,
+                damage: 10,
+                attackSpeed: 1000,
+                defense: 5
+            },
+            upgrades: {
+                damage: { level: 1, cost: 50 },
+                speed: { level: 1, cost: 75 },
+                defense: { level: 1, cost: 60 },
+                health: { level: 1, cost: 40 }
+            },
+            hiredCats: [],
+            locations: [],
+            selectedDifficulty: 'easy'
+        };
+
+        const catEmojis = ['😾', '🙀', '😺', '😾', '🐯', '😿', '😹', '😼'];
+        const locationNames = [
+            'Arena Novato', 'Coliseo Romano', 'Anfiteatro Salvaje', 'Arena Imperial',
+            'Estadio Legendario', 'Templo del Combate', 'Fortaleza Eterna', 'Arena Suprema'
+        ];
+
+        let inCombat = false;
+        let combatInterval;
+
+        // Initialize game
+        function initGame() {
+            generateLocations();
+            loadGame();
+            updateUI();
+            generateCatList();
+            generateMapGrid();
+        }
+
+        function generateLocations() {
+            gameState.locations = [];
+            for (let i = 0; i < 8; i++) {
+                gameState.locations.push({
+                    name: locationNames[i],
+                    conquered: i === 0,
+                    champion: {
+                        emoji: catEmojis[Math.floor(Math.random() * catEmojis.length)],
+                        hp: 150 + (i * 50),
+                        damage: 15 + (i * 5),
+                        name: `Campeón ${locationNames[i]}`
+                    }
+                });
+            }
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function updateUI() {
+            document.getElementById('gold').textContent = gameState.gold;
+            document.getElementById('glory').textContent = gameState.glory;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('current-location').textContent = gameState.locations[gameState.currentLocation].name;
+            
+            document.getElementById('player-hp').textContent = gameState.playerStats.hp;
+            document.getElementById('player-health').style.width = (gameState.playerStats.hp / gameState.playerStats.maxHp) * 100 + '%';
+            
+            // Update upgrade display
+            Object.keys(gameState.upgrades).forEach(key => {
+                const upgrade = gameState.upgrades[key];
+                document.getElementById(key + '-level').textContent = upgrade.level;
+                document.getElementById(key + '-cost').textContent = upgrade.cost;
+            });
+            
+            document.getElementById('damage-value').textContent = gameState.playerStats.damage;
+            document.getElementById('speed-value').textContent = (gameState.playerStats.attackSpeed / 1000).toFixed(1);
+            document.getElementById('defense-value').textContent = gameState.playerStats.defense;
+            document.getElementById('health-value').textContent = gameState.playerStats.maxHp;
+        }
+
+        function selectDifficulty(event) {
+            document.querySelectorAll('.enemy-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            gameState.selectedDifficulty = event.currentTarget.dataset.difficulty;
+            
+            const enemyData = getDifficultyData(gameState.selectedDifficulty);
+            document.getElementById('enemy-emoji').textContent = enemyData.emoji;
+        }
+
+        function getDifficultyData(difficulty) {
+            const base = {
+                easy: { hp: 80, damage: 8, gold: 20, glory: 5, emoji: '😺' },
+                medium: { hp: 120, damage: 12, gold: 40, glory: 15, emoji: '😾' },
+                hard: { hp: 180, damage: 18, gold: 80, glory: 35, emoji: '🐯' }
+            };
+            return base[difficulty];
+        }
+
+        function startCombat() {
+            if (inCombat) return;
+            
+            inCombat = true;
+            document.getElementById('fight-btn').disabled = true;
+            
+            const enemyData = getDifficultyData(gameState.selectedDifficulty);
+            let enemy = {
+                hp: enemyData.hp,
+                maxHp: enemyData.hp,
+                damage: enemyData.damage,
+                emoji: enemyData.emoji
+            };
+            
+            gameState.playerStats.hp = gameState.playerStats.maxHp;
+            
+            logCombat(`🏟️ ¡Comienza el combate contra ${enemy.emoji}!`);
+            
+            combatInterval = setInterval(() => {
+                // Player attacks
+                const playerDamage = Math.max(1, gameState.playerStats.damage - Math.floor(Math.random() * 5));
+                enemy.hp -= playerDamage;
+                logCombat(`🗡️ Atacas por ${playerDamage} de daño`);
+                
+                if (enemy.hp <= 0) {
+                    endCombat(true, enemyData);
+                    return;
+                }
+                
+                // Enemy attacks
+                const enemyDamage = Math.max(1, enemy.damage - Math.floor(gameState.playerStats.defense / 100 * enemy.damage));
+                gameState.playerStats.hp -= enemyDamage;
+                logCombat(`${enemy.emoji} Te ataca por ${enemyDamage} de daño`);
+                
+                if (gameState.playerStats.hp <= 0) {
+                    gameState.playerStats.hp = 0;
+                    endCombat(false, enemyData);
+                    return;
+                }
+                
+                updateCombatUI(enemy);
+            }, gameState.playerStats.attackSpeed);
+        }
+
+        function updateCombatUI(enemy) {
+            document.getElementById('player-hp').textContent = gameState.playerStats.hp;
+            document.getElementById('player-health').style.width = (gameState.playerStats.hp / gameState.playerStats.maxHp) * 100 + '%';
+            
+            document.getElementById('enemy-hp').textContent = enemy.hp;
+            document.getElementById('enemy-health').style.width = (enemy.hp / enemy.maxHp) * 100 + '%';
+        }
+
+        function endCombat(playerWon, enemyData) {
+            clearInterval(combatInterval);
+            inCombat = false;
+            document.getElementById('fight-btn').disabled = false;
+            
+            if (playerWon) {
+                gameState.gold += enemyData.gold;
+                gameState.glory += enemyData.glory;
+                logCombat(`🎉 ¡Victoria! Ganas ${enemyData.gold} oro y ${enemyData.glory} gloria`);
+                
+                if (gameState.glory >= gameState.level * 100) {
+                    gameState.level++;
+                    logCombat(`⬆️ ¡Subes al nivel ${gameState.level}!`);
+                }
+            } else {
+                logCombat(`💀 Has sido derrotado... Pierdes la mitad de tu oro`);
+                gameState.gold = Math.floor(gameState.gold / 2);
+            }
+            
+            gameState.playerStats.hp = gameState.playerStats.maxHp;
+            updateUI();
+            saveGame();
+        }
+
+        function challengeChampion() {
+            if (inCombat) return;
+            
+            const currentLocation = gameState.locations[gameState.currentLocation];
+            if (currentLocation.conquered) {
+                logCombat('Este campeón ya ha sido derrotado');
+                return;
+            }
+            
+            inCombat = true;
+            document.getElementById('champion-btn').disabled = true;
+            
+            let champion = { ...currentLocation.champion };
+            champion.maxHp = champion.hp;
+            
+            gameState.playerStats.hp = gameState.playerStats.maxHp;
+            
+            logCombat(`👑 ¡Desafías al ${champion.name} ${champion.emoji}!`);
+            
+            combatInterval = setInterval(() => {
+                // Player attacks
+                const playerDamage = Math.max(1, gameState.playerStats.damage - Math.floor(Math.random() * 8));
+                champion.hp -= playerDamage;
+                logCombat(`🗡️ Atacas por ${playerDamage} de daño`);
+                
+                if (champion.hp <= 0) {
+                    currentLocation.conquered = true;
+                    gameState.gold += 200;
+                    gameState.glory += 100;
+                    
+                    if (gameState.currentLocation < gameState.locations.length - 1) {
+                        gameState.currentLocation++;
+                    }
+                    
+                    logCombat(`🏆 ¡Has derrotado al campeón! +200 oro, +100 gloria`);
+                    endChampionCombat();
+                    generateMapGrid();
+                    return;
+                }
+                
+                // Champion attacks
+                const championDamage = Math.max(1, champion.damage - Math.floor(gameState.playerStats.defense / 100 * champion.damage));
+                gameState.playerStats.hp -= championDamage;
+                logCombat(`${champion.emoji} Te ataca por ${championDamage} de daño`);
+                
+                if (gameState.playerStats.hp <= 0) {
+                    gameState.playerStats.hp = 0;
+                    logCombat(`💀 El campeón te ha derrotado...`);
+                    endChampionCombat();
+                    return;
+                }
+                
+                updateChampionCombatUI(champion);
+            }, gameState.playerStats.attackSpeed);
+        }
+
+        function updateChampionCombatUI(champion) {
+            document.getElementById('player-hp').textContent = gameState.playerStats.hp;
+            document.getElementById('player-health').style.width = (gameState.playerStats.hp / gameState.playerStats.maxHp) * 100 + '%';
+            
+            document.getElementById('enemy-emoji').textContent = champion.emoji;
+            document.getElementById('enemy-hp').textContent = champion.hp;
+            document.getElementById('enemy-health').style.width = (champion.hp / champion.maxHp) * 100 + '%';
+        }
+
+        function endChampionCombat() {
+            clearInterval(combatInterval);
+            inCombat = false;
+            document.getElementById('champion-btn').disabled = false;
+            gameState.playerStats.hp = gameState.playerStats.maxHp;
+            updateUI();
+            saveGame();
+        }
+
+        function logCombat(message) {
+            const log = document.getElementById('combat-log');
+            log.innerHTML += '<div>' + message + '</div>';
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function buyUpgrade(type) {
+            const upgrade = gameState.upgrades[type];
+            if (gameState.gold < upgrade.cost) return;
+            
+            gameState.gold -= upgrade.cost;
+            upgrade.level++;
+            upgrade.cost = Math.floor(upgrade.cost * 1.5);
+            
+            switch(type) {
+                case 'damage':
+                    gameState.playerStats.damage += 5;
+                    break;
+                case 'speed':
+                    gameState.playerStats.attackSpeed = Math.max(300, gameState.playerStats.attackSpeed - 100);
+                    break;
+                case 'defense':
+                    gameState.playerStats.defense += 3;
+                    break;
+                case 'health':
+                    gameState.playerStats.maxHp += 20;
+                    gameState.playerStats.hp = gameState.playerStats.maxHp;
+                    break;
+            }
+            
+            updateUI();
+            saveGame();
+        }
+
+        function hireCat() {
+            if (gameState.gold < 200) return;
+            
+            gameState.gold -= 200;
+            const newCat = {
+                id: Date.now(),
+                emoji: catEmojis[Math.floor(Math.random() * catEmojis.length)],
+                level: 1,
+                hp: 80,
+                damage: 8,
+                maintenanceCost: 10
+            };
+            
+            gameState.hiredCats.push(newCat);
+            generateCatList();
+            updateUI();
+            saveGame();
+        }
+
+        function generateCatList() {
+            const catList = document.getElementById('cat-list');
+            catList.innerHTML = '';
+            
+            gameState.hiredCats.forEach(cat => {
+                const catCard = document.createElement('div');
+                catCard.className = 'cat-card';
+                catCard.innerHTML = `
+                    <div style="font-size: 40px; text-align: center;">${cat.emoji}</div>
+                    <div>Nivel: ${cat.level}</div>
+                    <div>❤️ Vida: ${cat.hp}</div>
+                    <div>🗡️ Daño: ${cat.damage}</div>
+                    <div>💰 Mantenimiento: ${cat.maintenanceCost}/día</div>
+                    <button class="button" onclick="upgradeCat(${cat.id})">
+                        Mejorar (💰 ${50 * cat.level})
+                    </button>
+                    <button class="button" onclick="fireCat(${cat.id})" style="background: #ff4444;">
+                        Despedir
+                    </button>
+                `;
+                catList.appendChild(catCard);
+            });
+        }
+
+        function upgradeCat(catId) {
+            const cat = gameState.hiredCats.find(c => c.id === catId);
+            const cost = 50 * cat.level;
+            
+            if (gameState.gold < cost) return;
+            
+            gameState.gold -= cost;
+            cat.level++;
+            cat.hp += 15;
+            cat.damage += 3;
+            cat.maintenanceCost += 5;
+            
+            generateCatList();
+            updateUI();
+            saveGame();
+        }
+
+        function fireCat(catId) {
+            gameState.hiredCats = gameState.hiredCats.filter(c => c.id !== catId);
+            generateCatList();
+            saveGame();
+        }
+
+        function sendCatsToFight() {
+            if (gameState.hiredCats.length === 0) {
+                alert('No tienes gatos contratados');
+                return;
+            }
+            
+            const selectedCats = gameState.hiredCats.slice(0, 3); // Max 3 cats
+            logCombat(`🐱 Enviando ${selectedCats.length} gatos a combatir...`);
+            
+            setTimeout(() => {
+                let totalReward = 0;
+                let survivors = [];
+                
+                selectedCats.forEach(cat => {
+                    const success = Math.random() > 0.3; // 70% success rate
+                    if (success) {
+                        totalReward += 15 * cat.level;
+                        survivors.push(cat);
+                        logCombat(`${cat.emoji} regresa victorioso con ${15 * cat.level} oro`);
+                    } else {
+                        logCombat(`${cat.emoji} ha sido herido y necesita descansar`);
+                        survivors.push(cat);
+                    }
+                });
+                
+                gameState.gold += totalReward;
+                updateUI();
+                saveGame();
+            }, 3000);
+        }
+
+        function generateMapGrid() {
+            const mapGrid = document.getElementById('map-grid');
+            mapGrid.innerHTML = '';
+            
+            gameState.locations.forEach((location, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'location-tile';
+                
+                if (location.conquered) {
+                    tile.classList.add('conquered');
+                } else if (index === gameState.currentLocation) {
+                    tile.classList.add('current');
+                }
+                
+                tile.innerHTML = `
+                    <div style="font-size: 30px;">${location.champion.emoji}</div>
+                    <div style="font-size: 10px; text-align: center;">${location.name}</div>
+                    ${location.conquered ? '<div style="color: #00ff00;">✓</div>' : ''}
+                `;
+                
+                if (index === gameState.currentLocation && !location.conquered) {
+                    tile.onclick = () => {
+                        showTab('combat');
+                        document.querySelector('[onclick="showTab(\'combat\')"]').classList.add('active');
+                    };
+                }
+                
+                mapGrid.appendChild(tile);
+            });
+        }
+
+        function exploreArea(areaType) {
+            if (gameState.hiredCats.length === 0) {
+                document.getElementById('exploration-result').innerHTML = 
+                    '<p style="color: #ff6666;">Necesitas gatos contratados para explorar</p>';
+                return;
+            }
+            
+            const areaData = {
+                forest: { name: '🌲 Bosque Oscuro', danger: 0.4, reward: 30 },
+                mountain: { name: '🏔️ Montaña Helada', danger: 0.6, reward: 50 },
+                desert: { name: '🏜️ Desierto Ardiente', danger: 0.8, reward: 80 }
+            };
+            
+            const area = areaData[areaType];
+            const exploringCats = [...gameState.hiredCats];
+            
+            document.getElementById('exploration-result').innerHTML = `
+                <p>Explorando ${area.name}...</p>
+                <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+                    ${exploringCats.map(cat => `<span style="font-size: 30px;">${cat.emoji}</span>`).join('')}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                let totalReward = 0;
+                let casualties = [];
+                let survivors = [];
+                
+                exploringCats.forEach(cat => {
+                    if (Math.random() < area.danger) {
+                        casualties.push(cat);
+                    } else {
+                        survivors.push(cat);
+                        totalReward += area.reward * cat.level;
+                    }
+                });
+                
+                // Remove casualties from hired cats
+                gameState.hiredCats = gameState.hiredCats.filter(cat => 
+                    !casualties.some(casualty => casualty.id === cat.id)
+                );
+                
+                let resultHTML = `<h3>Resultado de la Exploración:</h3>`;
+                
+                if (survivors.length > 0) {
+                    resultHTML += `<p style="color: #00ff00;">Supervivientes: ${survivors.map(cat => cat.emoji).join(' ')}</p>`;
+                    resultHTML += `<p style="color: #ffff00;">💰 Oro obtenido: ${totalReward}</p>`;
+                    gameState.gold += totalReward;
+                }
+                
+                if (casualties.length > 0) {
+                    resultHTML += `<p style="color: #ff6666;">💀 Bajas: ${casualties.map(cat => cat.emoji).join(' ')}</p>`;
+                }
+                
+                document.getElementById('exploration-result').innerHTML = resultHTML;
+                
+                generateCatList();
+                updateUI();
+                saveGame();
+            }, 3000);
+        }
+
+        function saveGame() {
+            try {
+                const saveData = JSON.stringify(gameState);
+                // Using a simple variable instead of localStorage
+                window.gameSave = saveData;
+            } catch (e) {
+                console.log('Save failed');
+            }
+        }
+
+        function loadGame() {
+            try {
+                if (window.gameSave) {
+                    const loaded = JSON.parse(window.gameSave);
+                    gameState = { ...gameState, ...loaded };
+                }
+            } catch (e) {
+                console.log('Load failed, using defaults');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent zoom on mobile
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+            
+            // Add enemy selection listeners
+            document.querySelectorAll('.enemy-option').forEach(option => {
+                option.addEventListener('click', selectDifficulty);
+            });
+            
+            // Auto-save every 30 seconds
+            setInterval(saveGame, 30000);
+            
+            // Daily maintenance cost
+            setInterval(() => {
+                let totalMaintenance = gameState.hiredCats.reduce((sum, cat) => sum + cat.maintenanceCost, 0);
+                if (totalMaintenance > 0) {
+                    gameState.gold = Math.max(0, gameState.gold - totalMaintenance);
+                    logCombat(`💰 Costes de mantenimiento diarios: -${totalMaintenance} oro`);
+                    updateUI();
+                    saveGame();
+                }
+            }, 60000); // Every minute for demo purposes
+        });
+
+        // Initialize the game
+        initGame();

@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>RPG - El liberador de gatitos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000000; /* Fondo negro sólido */
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00cc;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* para que no centre verticalmente */
+      min-height: 100vh;
+    }
+
+    #game {
+      max-width: 100%;
+      width: 100%;
+      padding: 15px;
+      box-sizing: border-box;
+      background: linear-gradient(#222, #111);
+      border: 4px double #00ffcc;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffcc;
+      margin: 15px auto 15px auto; /* solo arriba y abajo 15px, no margen gigante */
+      /* Para evitar espacios extra, no uses margin-bottom grande */
+    }
+
+    #controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #controls button {
+      background-color: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+    }
+
+    #controls button:hover {
+      background-color: #00ffcc;
+      color: #000;
+    }
+
+    #stats, #monsterStats {
+      border: 2px solid #00ffcc;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #111;
+      color: #00ffcc;
+    }
+
+    .stat {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    #text {
+      background-color: #111;
+      color: #00ffcc;
+      padding: 10px;
+      border: 2px solid #00ffcc;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    /* Estilos para el laberinto */
+    #laberintoContainer {
+      display: none;
+      margin-top: 10px;
+    }
+
+    #laberinto {
+      display: grid;
+      grid-template-columns: repeat(5, 40px);
+      grid-template-rows: repeat(5, 40px);
+      gap: 2px;
+      margin: 10px auto;
+      justify-content: center;
+      background-color: #111;
+      padding: 10px;
+      border: 2px solid #00ffcc;
+    }
+
+    .celda {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border: 1px solid #00ffcc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+    }
+
+    .jugador {
+      background-color: #00ffcc !important;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    .objeto {
+      background-color: #444;
+    }
+
+    .trampa {
+      background-color: #660000;
+      animation: parpadeo 1s infinite;
+    }
+
+    .salida {
+      background-color: #006600;
+      border: 2px solid #00ff00;
+      animation: brillo 2s infinite;
+    }
+
+    @keyframes parpadeo {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+
+    @keyframes brillo {
+      0%, 100% { box-shadow: 0 0 5px #00ff00; }
+      50% { box-shadow: 0 0 15px #00ff00; }
+    }
+
+    /* Cruceta de controles */
+    #cruceta {
+      display: grid;
+      grid-template-columns: 40px 40px 40px;
+      grid-template-rows: 40px 40px 40px;
+      gap: 2px;
+      margin: 10px auto;
+      justify-content: center;
+    }
+
+    .boton-cruceta {
+      width: 40px;
+      height: 40px;
+      background-color: #000;
+      border: 2px solid #00ffcc;
+      color: #00ffcc;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .boton-cruceta:hover {
+      background-color: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    .boton-cruceta:active {
+      background-color: #ff00cc;
+      border-color: #ff00cc;
+    }
+
+    #boton-arriba { grid-column: 2; grid-row: 1; }
+    #boton-izq { grid-column: 1; grid-row: 2; }
+    #boton-centro { grid-column: 2; grid-row: 2; }
+    #boton-der { grid-column: 3; grid-row: 2; }
+    #boton-abajo { grid-column: 2; grid-row: 3; }
+
+    #temporizador {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff00cc;
+      margin: 10px 0;
+      text-shadow: 0 0 10px #ff00cc;
+    }
+
+    /* Estilos para la pantalla de subida de nivel */
+    #levelUpScreen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #levelUpModal {
+      background: linear-gradient(#333, #222);
+      border: 4px double #ffcc00;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 30px #ffcc00;
+      max-width: 400px;
+      width: 90%;
+      animation: levelUpPulse 2s infinite;
+    }
+
+    @keyframes levelUpPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    #levelUpModal h2 {
+      color: #ffcc00;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px #ffcc00;
+      animation: levelUpGlow 1s infinite alternate;
+    }
+
+    @keyframes levelUpGlow {
+      0% { text-shadow: 0 0 15px #ffcc00; }
+      100% { text-shadow: 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
+    }
+
+    .levelup-button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 15px;
+      background: #000;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .levelup-button:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 15px #00ffcc;
+      transform: translateY(-2px);
+    }
+
+    .levelup-description {
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 5px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="stats">
+      <span class="stat">Nivel de maullido: <strong><span id="levelText">1</span></strong></span>
+      <span class="stat">XP: <strong><span id="xpText">0</span> / <span id="xpRequiredText">100</span></strong></span>
+      <span class="stat">Salud: <strong><span id="healthText">100</span></strong></span>
+      <span class="stat">Ataque: <strong><span id="attackText">5</span></strong></span>
+      <span class="stat">Defensa: <strong><span id="defenseText">0</span></strong></span>
+      <span class="stat">Premios de gato: <strong><span id="goldText">50</span></strong></span>
+    </div>
+    <div id="controls">
+      <button id="button1">Ir a la tienda</button>
+      <button id="button2">Patrullar las calles</button>
+      <button id="button3">Luchar contra El Perro</button>
+    </div>
+    <div id="monsterStats" style="display:none">
+      <span class="stat">Enemigo: <strong><span id="monsterName"></span></strong></span>
+      <span class="stat">Salud: <strong><span id="monsterHealth"></span></strong></span>
+    </div>
+    
+    <!-- Laberinto para robar en casa -->
+    <div id="laberintoContainer">
+      <div id="temporizador"></div>
+      <div id="laberinto"></div>
+      <div id="cruceta">
+        <div class="boton-cruceta" id="boton-arriba">▲</div>
+        <div class="boton-cruceta" id="boton-izq">◄</div>
+        <div class="boton-cruceta" id="boton-centro">MIAU</div>
+        <div class="boton-cruceta" id="boton-der">►</div>
+        <div class="boton-cruceta" id="boton-abajo">▼</div>
+      </div>
+    </div>
+    
+    <div id="text">Bienvenido al liberador de gatitos. Debes derrotar al Perro que impide a la gente tener gatitos en el pueblo. Estás en tu guarida. ¿Adónde quieres ir? Usa los botones de arriba.</div>
+  </div>
+
+  <!-- Pantalla de subida de nivel -->
+  <div id="levelUpScreen">
+    <div id="levelUpModal">
+      <h2>🎉 ¡Miau! ¡Subes tu nivel de Maullido! 🎉</h2>
+      <p>Has alcanzado el nivel <span id="newLevelText">2</span></p>
+      <p>Elige tu mejora:</p>
+      
+      <button class="levelup-button" onclick="elegirMejora('salud')">
+        💗 Aumentar Vida Máxima
+        <div class="levelup-description">Más resistencia en combate</div>
+      </button>
+      
+      <button class="levelup-button" onclick="elegirMejora('ataque')">
+        ⚔️ Aumentar Ataque
+        <div class="levelup-description">Más daño con todas las armas</div>
+      </button>
+      
+      <button class="levelup-button" onclick="elegirMejora('defensa')">
+        🛡️ Aumentar Defensa
+        <div class="levelup-description">Reduces el daño recibido</div>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let xp = 0, salud = 100, saludMaxima = 100, oro = 50, armaActual = 0, armaduraActual = -1, luchando, saludMonstruo;
+    let nivel = 1, ataqueExtra = 0, defensaExtra = 0;
+    let inventario = ["garrita de gato"];
+    let inventarioArmaduras = [];
+    
+    // Variables del laberinto
+    let jugadorX = 0, jugadorY = 0;
+    let mapaLaberinto = [];
+    let salidaX = 0, salidaY = 0;
+    let tiempoInicio = 0;
+    let tiempoLimite = 30000; // 30 segundos en milisegundos
+    let temporizador = null;
+    
+    // Función para calcular XP requerida para el siguiente nivel (curva exponencial)
+    function calcularXPRequerida(nivel) {
+      return Math.floor(100 * Math.pow(1.5, nivel - 1));
+    }
+    
+    const armas = [
+      { name: "garrita de gato", power: 5 },
+      { name: "navaja oxidada desafilada", power: 10 },
+      { name: "martillo de la caja de herramientas", power: 20 },
+      { name: "bayoneta de la primera guerra mundial casi afilada", power: 40 },
+      { name: "espada de Wulflund sin filo", power: 60 },
+      { name: "katana de gato muy afilada", power: 100 }
+    ];
+    
+    const armaduras = [
+      { name: "casco de cartón", defense: 2 },
+      { name: "almohada acolchada", defense: 5 },
+      { name: "armadura de escamas de pez", defense: 8 },
+      { name: "exoesqueleto de gato cibernético sin batería", defense: 12 }
+    ];
+    
+    const insectos = [
+      "mosca molesta",
+      "mosquito mamón",
+      "cucaracha de son gotleu",
+      "avispa con ganas de tocar los huevos",
+      "rata ladrona",
+      "mendigo de la boutique del gelato",
+      "araña con moho",
+      "libélula maniaca homicida con transtorno de personalidad múltiple, bipolar y psicópata",
+      "mapache terrible",
+      "mantis atea"
+    ];
+    
+    const secuaces = [
+      "votante del PSOE",
+      "cocinero de restaurante chino",
+      "propietario de un loro muy caro",
+      "niño alérgico a los gatos",
+      "anciano que odia los maullidos",
+      "tiktoker de perros",
+      "influencer sin alma",
+      "dueño de tienda de peces",
+      "experto en bonsáis carnívoros",
+      "peluquero que prefiere caniches"
+    ];
+    
+const monstruos = [
+  { name: insectos[Math.floor(Math.random() * insectos.length)], level: 2, health: 15 },
+  { name: secuaces[Math.floor(Math.random() * secuaces.length)], level: 8, health: 50 },
+  { name: "Perro Sánchez", level: 20, health: 3000 }
+];
+
+// Nuevos monstruos para la aventura
+const monstruosAventura = [
+  { name: "Lobo Salvaje", level: 12, health: 80 },
+  { name: "Oso del Bosque", level: 15, health: 120 },
+  { name: "Araña Gigante", level: 18, health: 150 },
+  { name: "Bandido", level: 20, health: 180 },
+  { name: "Troll del Puente", level: 25, health: 250 },
+  { name: "Golem de Piedra", level: 30, health: 400 },
+  { name: "Dragón Menor", level: 35, health: 500 },
+  { name: "Jefe Bandido", level: 40, health: 600 }
+];
+
+const ubicaciones = [
+  {
+    name: "madriguera",
+    "button text": ["Ir a la tienda", "Patrullar las calles", "Luchar contra El Perro"],
+    "button functions": [irTienda, irCalles, antesDragon],
+    text: 'Estás en tu madriguera. Escrito en idioma Gatés, ves un cartel que dice "Tienda clandestina".'
+  },
+  {
+    name: "tienda",
+    "button text": ["Curar al 100% (10 premios de gato)", "Comprar arma (30 premios de gato)", "Volver a tu madriguera"],
+    "button functions": [comprarSalud, comprarArma, irPlaza],
+    text: "Has entrado en la tienda."
+  },
+  {
+    name: "calles",
+    "button text": ["Patrullar las cloacas", "Ir a por un secuaz", "Volver a tu madriguera"],
+    "button functions": [pelearLimo, pelearBestia, irPlaza],
+    text: "Patrullas las calles. Ves algunos enemigos que odian a los gatos y casas perfectas para mangar si te cargas a los que las vigilan."
+  },
+  {
+    name: "pelea",
+    "button text": ["Atacar", "Esquivar", "Huir"],
+    "button functions": [atacar, esquivar, irPlaza],
+    text: "Estás luchando contra un enemigo."
+  },
+  {
+    name: "victoria",
+    "button text": ["Patrullar más", "Volver a tu madriguera", "Robar en su casa"],
+    "button functions": [irCalles, irPlaza, robarCasa,],
+    text: 'El enemigo grita "¡Arg! ¡Es culpa de la ultraderecha!" al morir. Ganas experiencia y encuentras premios de gato.'
+  },
+  {
+    name: "derrota",
+    "button text": ["¿REJUGAR?", "¿REJUGAR?", "¿REJUGAR?"],
+    "button functions": [reiniciar, reiniciar, reiniciar],
+    text: "Has morido. ☠️"
+  },
+  // NUEVA UBICACIÓN MODIFICADA PARA GANAR
+  {
+    name: "gana",
+    "button text": ["¿REJUGAR?", "Volver a la madriguera", "Salir de la aldea"],
+    "button functions": [reiniciar, irPlaza, salirAldea],
+    text: "¡Derrotaste a Perro Sánchez! ¡GANAS EL JUEGO! 🎉 ¿Qué quieres hacer ahora?"
+  },
+  {
+    name: "antesDragon",
+    "button text": ["Sí, pelear contra El Perro", "No, quiero volver a la madriguera", "Organizo una manifestación contra El Perro"],
+    "button functions": [pelearDragon, irPlaza, organizarManifestacion],
+    text: "Te acercas a la guarida de Perro Sánchez. Puedes oír sus ladridos autoritarios desde aquí. ¿Estás seguro de lo que quieres hacer?"
+  },
+  // NUEVA UBICACIÓN PARA EL DEBATE
+  {
+    name: "debate",
+    "button text": ["Es verdad, ¡fuera los fascistas!", "El socialismo sanchista es un claro ejemplo de tiranía que llevará necesariamente al neofascismo", "Ostras, otro apagón, nada, todos a casa..."],
+    "button functions": [respuestaFascistas, respuestaTirania, respuestaApagon],
+    text: 'Organizas una manifestación y Perro Sánchez sale a confrontarte. Te mira fijamente y dice: "¡La prohibición de los gatitos en la aldea es culpa de la ultraderecha y son todo bulos. ¡Debáteme si te atreves!"'
+  },
+  {
+    name: "huevoDePascua",
+    "button text": ["2", "8", "Volver a tu madriguera"],
+    "button functions": [eligeDos, eligeOcho, irPlaza],
+    text: "Encuentras un juego secreto. Elige un número..."
+  },
+  {
+    name: "laberinto",
+    "button text": ["Miau", "Miau", "Miau"],
+    "button functions": [function(){}, function(){}, function(){}],
+    text: "Estás chorimangando en una casa. Muévete con la cruceta para explorar."
+  },
+  
+  // NUEVAS UBICACIONES PARA LA AVENTURA
+  {
+    name: "salidaAldea",
+    "button text": ["Ir al Bosque Oscuro", "Explorar el Río", "Descansar un poco"],
+    "button functions": [irBosque, irRio, descansarCamino],
+    text: "Sales de la aldea y te encuentras en un cruce de caminos. El aire huele a aventura y peligro. Tu pelaje se eriza de emoción."
+  },
+  {
+    name: "bosqueOscuro",
+    "button text": ["Cazar en el bosque", "Buscar refugio", "Seguir adelante"],
+    "button functions": [cazarBosque, buscarRefugio, avanzarBosque],
+    text: "Entras en un bosque denso y oscuro. Los árboles son tan altos que apenas se ve el cielo. Escuchas ruidos extraños entre la maleza."
+  },
+  {
+    name: "rio",
+    "button text": ["Pescar", "Cruzar nadando", "Seguir la orilla"],
+    "button functions": [pescarRio, cruzarRio, seguirOrilla],
+    text: "Llegas a un río cristalino. El agua fluye rápidamente y puedes ver peces nadando. Hay un puente de madera viejo más adelante."
+  },
+  {
+    name: "campamento",
+    "button text": ["Dormir", "Preparar comida", "Entrenar"],
+    "button functions": [dormirCampamento, prepararComida, entrenar],
+    text: "Montas un pequeño campamento. Las estrellas brillan sobre ti y sientes la tranquilidad de la naturaleza."
+  },
+  {
+    name: "cueva",
+    "button text": ["Explorar profundo", "Buscar tesoros", "Salir de la cueva"],
+    "button functions": [explorarCueva, buscarTesoro, salirCueva],
+    text: "Encuentras una cueva misteriosa. Hay cristales brillantes en las paredes y un eco extraño resuena en las profundidades."
+  },
+  {
+    name: "puente",
+    "button text": ["Cruzar sigilosamente", "Confrontar al guardián", "Buscar otro camino"],
+    "button functions": [cruzarSigiloso, confrontarTroll, buscarOtroCamino],
+    text: "Te acercas a un puente de piedra antiguo. Un Troll enorme bloquea el paso, pero parece estar dormitando."
+  },
+  {
+    name: "montaña",
+    "button text": ["Escalar la montaña", "Rodear por el valle", "Acampar aquí"],
+    "button functions": [escalarMontaña, rodearValle, acamparMontaña],
+    text: "Llegas al pie de una montaña imponente. El camino hacia la cima es traicionero, pero desde arriba podrías ver la próxima aldea."
+  },
+  {
+    name: "aldea2",
+    "button text": ["Hablar con aldeanos", "Ir a la posada", "Explorar la aldea"],
+    "button functions": [hablarAldeanos, irPosada, explorarAldea2],
+    text: "¡Por fin! Llegas a una nueva aldea. Los habitantes te miran con curiosidad. Huele a pan fresco y aventuras por descubrir."
+  },
+  {
+    name: "peleaAventura",
+    "button text": ["Atacar", "Esquivar", "Usar habilidad especial"],
+    "button functions": [atacarAventura, esquivarAventura, usarHabilidadEspecial],
+    text: "Te enfrentas a un enemigo en tu aventura."
+  },
+  {
+    name: "victoriaAventura",
+    "button text": ["Continuar aventura", "Descansar", "Buscar más enemigos"],
+    "button functions": [continuarAventura, descansarVictoria, buscarEnemigos],
+    text: "¡Victoria! Tu enemigo cae derrotado. Sientes que te haces más fuerte con cada batalla."
+  }
+];
+
+// NUEVAS VARIABLES PARA LA AVENTURA
+let aventuraIniciada = false;
+let ubicacionAnterior = "";
+let enemigosAventuraDerrotados = 0;
+
+// VARIABLES PARA EL DEBATE CON PERRO SÁNCHEZ
+let vecesHuidoPerroSanchez = 0;
+let vecesRetadoPerroSanchez = 0;
+
+// FUNCIÓN PARA SALIR DE LA ALDEA
+function salirAldea() {
+  aventuraIniciada = true;
+  enemigosAventuraDerrotados = 0;
+  actualizar("salidaAldea");
+}
+
+// FUNCIONES DEL BOSQUE
+function irBosque() {
+  ubicacionAnterior = "salidaAldea";
+  actualizar("bosqueOscuro");
+}
+
+function cazarBosque() {
+  if (Math.random() < 0.6) {
+    // Encuentro con enemigo
+    fighting = Math.floor(Math.random() * 3); // Lobo, Oso, o Araña
+    goFightAventura();
+  } else {
+    // Encuentra comida
+    health = Math.min(health + 20, 100);
+    text.innerText = "Cazas un conejo salvaje y recuperas 20 puntos de salud. Te sientes renovado.";
+    setTimeout(() => actualizar("bosqueOscuro"), 2000);
+  }
+}
+
+function buscarRefugio() {
+  actualizar("cueva");
+}
+
+function avanzarBosque() {
+  if (Math.random() < 0.7) {
+    // Encuentro con bandido
+    fighting = 3; // Bandido
+    goFightAventura();
+  } else {
+    actualizar("puente");
+  }
+}
+
+// FUNCIONES DEL RÍO
+function irRio() {
+  ubicacionAnterior = "salidaAldea";
+  actualizar("rio");
+}
+
+function pescarRio() {
+  if (Math.random() < 0.5) {
+    gold += 15;
+    text.innerText = "Pescas un pez dorado y encuentras 15 premios de gato en su interior. ¡Qué suerte!";
+  } else {
+    text.innerText = "Pescas durante un rato pero no tienes suerte. Al menos te relajas.";
+  }
+  setTimeout(() => actualizar("rio"), 2000);
+}
+
+function cruzarRio() {
+  if (Math.random() < 0.3) {
+    health -= 10;
+    text.innerText = "La corriente es fuerte y pierdes 10 puntos de salud, pero logras cruzar.";
+    if (health <= 0) {
+      health = 1;
+    }
+  } else {
+    text.innerText = "Cruzas el río sin problemas. Tus habilidades felinas te han salvado.";
+  }
+  setTimeout(() => actualizar("montaña"), 2000);
+}
+
+function seguirOrilla() {
+  actualizar("puente");
+}
+function organizarManifestacion() {
+  actualizar("debate");
+}
+// FUNCIONES DE DESCANSO
+function descansarCamino() {
+  actualizar("campamento");
+}
+
+function dormirCampamento() {
+  health = Math.min(health + 30, 100);
+  text.innerText = "Duermes profundamente bajo las estrellas. Recuperas 30 puntos de salud.";
+  setTimeout(() => actualizar("campamento"), 2000);
+}
+
+function prepararComida() {
+  gold += 5;
+  text.innerText = "Preparas una deliciosa comida con hierbas del bosque. Encuentras 5 premios de gato.";
+  setTimeout(() => actualizar("campamento"), 2000);
+}
+
+function entrenar() {
+  xp += 10;
+  text.innerText = "Entrenas tus habilidades de combate. Ganas 10 puntos de experiencia.";
+  setTimeout(() => actualizar("campamento"), 2000);
+}
+
+// FUNCIONES DE LA CUEVA
+function explorarCueva() {
+  if (Math.random() < 0.4) {
+    fighting = 2; // Araña Gigante
+    goFightAventura();
+  } else {
+    text.innerText = "Exploras la cueva y encuentras hermosos cristales, pero nada más.";
+    setTimeout(() => actualizar("cueva"), 2000);
+  }
+}
+
+function buscarTesoro() {
+  if (Math.random() < 0.6) {
+    gold += 25;
+    text.innerText = "¡Encuentras un cofre escondido con 25 premios de gato!";
+  } else {
+    text.innerText = "Buscas por toda la cueva pero no encuentras nada valioso.";
+  }
+  setTimeout(() => actualizar("cueva"), 2000);
+}
+
+function salirCueva() {
+  actualizar("bosqueOscuro");
+}
+
+// FUNCIONES DEL PUENTE
+function cruzarSigiloso() {
+  if (Math.random() < 0.7) {
+    text.innerText = "Cruzas sigilosamente sin despertar al Troll. ¡Bien hecho!";
+    setTimeout(() => actualizar("montaña"), 2000);
+  } else {
+    fighting = 4; // Troll del Puente
+    text.innerText = "¡El Troll se despierta! ¡Prepárate para luchar!";
+    setTimeout(() => goFightAventura(), 2000);
+  }
+}
+
+function confrontarTroll() {
+  fighting = 4; // Troll del Puente
+  goFightAventura();
+}
+
+function buscarOtroCamino() {
+  actualizar("montaña");
+}
+
+// FUNCIONES DE LA MONTAÑA
+function escalarMontaña() {
+  if (Math.random() < 0.5) {
+    fighting = 5; // Golem de Piedra
+    text.innerText = "¡Un Golem de Piedra te bloquea el camino!";
+    setTimeout(() => goFightAventura(), 2000);
+  } else {
+    text.innerText = "Escalas con éxito hasta la cima. ¡Puedes ver la aldea a lo lejos!";
+    setTimeout(() => actualizar("aldea2"), 2000);
+  }
+}
+
+function rodearValle() {
+  if (Math.random() < 0.6) {
+    fighting = 6; // Dragón Menor
+    text.innerText = "¡Un Dragón Menor aparece volando desde el valle!";
+    setTimeout(() => goFightAventura(), 2000);
+  } else {
+    actualizar("aldea2");
+  }
+}
+
+function acamparMontaña() {
+  health = Math.min(health + 25, 100);
+  text.innerText = "Acampas en la montaña. El aire fresco te revitaliza. Recuperas 25 puntos de salud.";
+  setTimeout(() => actualizar("montaña"), 2000);
+}
+
+// FUNCIONES DE LA SEGUNDA ALDEA
+function hablarAldeanos() {
+  if (enemigosAventuraDerrotados >= 3) {
+    text.innerText = "Los aldeanos te reconocen como un héroe. Te dan la bienvenida con honores.";
+    gold += 50;
+    xp += 25;
+  } else {
+    text.innerText = "Los aldeanos te miran con curiosidad pero son amigables contigo.";
+    gold += 10;
+  }
+  setTimeout(() => actualizar("aldea2"), 2000);
+}
+
+function irPosada() {
+  health = 100;
+  gold -= 20;
+  text.innerText = "Descansas en la posada. Te curas completamente pero pagas 20 premios de gato.";
+  setTimeout(() => actualizar("aldea2"), 2000);
+}
+
+function explorarAldea2() {
+  if (Math.random() < 0.3) {
+    fighting = 7; // Jefe Bandido
+    text.innerText = "¡Te topas con el Jefe de los Bandidos en las afueras de la aldea!";
+    setTimeout(() => goFightAventura(), 2000);
+  } else {
+    text.innerText = "Exploras la aldea y conoces a gente interesante. Tu aventura continúa...";
+    gold += 15;
+    setTimeout(() => actualizar("aldea2"), 2000);
+  }
+}
+
+// FUNCIONES DE COMBATE DE AVENTURA
+function goFightAventura() {
+  currentWeaponIndex = 0;
+  monsterHealth = monstruosAventura[fighting].health;
+  monsterStats.style.display = "block";
+  monsterName.innerText = monstruosAventura[fighting].name;
+  monsterHealthText.innerText = monsterHealth;
+  actualizar("peleaAventura");
+}
+
+function atacarAventura() {
+  text.innerText = "Atacas al " + monstruosAventura[fighting].name + ".";
+  text.innerText += " Le haces " + (weapons[currentWeaponIndex].power + Math.floor(Math.random() * xp) + 1) + " puntos de daño.";
+  
+  monsterHealth -= weapons[currentWeaponIndex].power + Math.floor(Math.random() * xp) + 1;
+  
+  if (monsterHealth <= 0) {
+    defeatMonsterAventura();
+  } else {
+    text.innerText += " El " + monstruosAventura[fighting].name + " te ataca.";
+    text.innerText += " Pierdes " + getMonsterAttackValueAventura(monstruosAventura[fighting].level) + " puntos de vida.";
+    health -= getMonsterAttackValueAventura(monstruosAventura[fighting].level);
+    if (health <= 0) {
+      lose();
+    }
+  }
+  healthText.innerText = health;
+  monsterHealthText.innerText = monsterHealth;
+}
+
+function esquivarAventura() {
+  if (Math.random() < 0.5) {
+    text.innerText = "Esquivas el ataque del " + monstruosAventura[fighting].name;
+  } else {
+    text.innerText = "Intentas esquivar pero fallas.";
+    text.innerText += " El " + monstruosAventura[fighting].name + " te ataca.";
+    text.innerText += " Pierdes " + getMonsterAttackValueAventura(monstruosAventura[fighting].level) + " puntos de vida.";
+    health -= getMonsterAttackValueAventura(monstruosAventura[fighting].level);
+    if (health <= 0) {
+      lose();
+    }
+    healthText.innerText = health;
+  }
+}
+
+function usarHabilidadEspecial() {
+  if (xp >= 20) {
+    let damage = Math.floor(Math.random() * 50) + 25;
+    text.innerText = "Usas tu habilidad especial felina. ¡Golpe crítico de " + damage + " puntos!";
+    monsterHealth -= damage;
+    xp -= 20;
+    xpText.innerText = xp;
+    
+    if (monsterHealth <= 0) {
+      defeatMonsterAventura();
+    } else {
+      text.innerText += " El " + monstruosAventura[fighting].name + " contraataca.";
+      text.innerText += " Pierdes " + getMonsterAttackValueAventura(monstruosAventura[fighting].level) + " puntos de vida.";
+      health -= getMonsterAttackValueAventura(monstruosAventura[fighting].level);
+      if (health <= 0) {
+        lose();
+      }
+      healthText.innerText = health;
+    }
+    monsterHealthText.innerText = monsterHealth;
+  } else {
+    text.innerText = "No tienes suficiente experiencia para usar tu habilidad especial. Necesitas 20 XP.";
+  }
+}
+
+function getMonsterAttackValueAventura(level) {
+  const hit = (level * 5) - (Math.floor(Math.random() * xp));
+  return hit > 0 ? hit : 0;
+}
+
+function defeatMonsterAventura() {
+  gold += Math.floor(monstruosAventura[fighting].level * 6.7);
+  xp += monstruosAventura[fighting].level;
+  goldText.innerText = gold;
+  xpText.innerText = xp;
+  enemigosAventuraDerrotados++;
+  actualizar("victoriaAventura");
+}
+
+function continuarAventura() {
+  // Vuelve a la ubicación anterior o avanza según la lógica
+  if (ubicacionAnterior === "salidaAldea") {
+    actualizar("salidaAldea");
+  } else {
+    actualizar("bosqueOscuro");
+  }
+}
+function respuestaFascistas() {
+  text.innerText = "¡Has caído en la trampa! El pueblo te apalea por traidor. Has sido derrotado por el populismo.";
+  health = 0;
+  setTimeout(() => actualizar("derrota"), 2000);
+}
+
+function respuestaTirania() {
+  text.innerText = "¡Tu respuesta intelectualmente superior despierta al pueblo! Los aldeanos se levantan en revuelta contra la tiranía. Perro Sánchez huye despavorido. ¡Has ganado con el poder de la razón!";
+  setTimeout(() => actualizar("gana"), 2000);
+}
+
+function respuestaApagon() {
+  text.innerText = "Misteriosamente se va la luz en toda la aldea. Todos se van a casa confusos. Perro Sánchez desaparece en la oscuridad. Has evitado el conflicto... por ahora.";
+  setTimeout(() => irPlaza(), 2000);
+}
+function descansarVictoria() {
+  health = Math.min(health + 15, 100);
+  healthText.innerText = health;
+  text.innerText = "Descansas después de la batalla y recuperas 15 puntos de salud.";
+  setTimeout(() => continuarAventura(), 2000);
+}
+
+function buscarEnemigos() {
+  if (Math.random() < 0.8) {
+    fighting = Math.floor(Math.random() * monstruosAventura.length);
+    text.innerText = "¡Encuentras otro enemigo!";
+    setTimeout(() => goFightAventura(), 1500);
+  } else {
+    text.innerText = "No encuentras más enemigos por ahora.";
+    setTimeout(() => continuarAventura(), 2000);
+  }
+}
+    const btn1 = document.querySelector("#button1"),
+          btn2 = document.querySelector("#button2"),
+          btn3 = document.querySelector("#button3"),
+          txt = document.querySelector("#text"),
+          levelTxt = document.querySelector("#levelText"),
+          xpTxt = document.querySelector("#xpText"),
+          xpRequiredTxt = document.querySelector("#xpRequiredText"),
+          saludTxt = document.querySelector("#healthText"),
+          attackTxt = document.querySelector("#attackText"),
+          defenseTxt = document.querySelector("#defenseText"),
+          oroTxt = document.querySelector("#goldText"),
+          statsMon = document.querySelector("#monsterStats"),
+          nombreMon = document.querySelector("#monsterName"),
+          saludMonTxt = document.querySelector("#monsterHealth"),
+          laberintoContainer = document.querySelector("#laberintoContainer"),
+          laberinto = document.querySelector("#laberinto"),
+          temporizadorDiv = document.querySelector("#temporizador"),
+          levelUpScreen = document.querySelector("#levelUpScreen"),
+          newLevelText = document.querySelector("#newLevelText");
+
+    btn1.onclick = irTienda;
+    btn2.onclick = irCalles;
+    btn3.onclick = antesDragon;
+
+    // Configurar controles del laberinto
+    document.querySelector("#boton-arriba").onclick = () => moverJugador(0, -1);
+    document.querySelector("#boton-abajo").onclick = () => moverJugador(0, 1);
+    document.querySelector("#boton-izq").onclick = () => moverJugador(-1, 0);
+    document.querySelector("#boton-der").onclick = () => moverJugador(1, 0);
+    document.querySelector("#boton-centro").onclick = function(){};
+
+    // Inicializar estadísticas
+    function actualizarEstadisticas() {
+      levelTxt.innerText = nivel;
+      xpTxt.innerText = xp;
+      xpRequiredTxt.innerText = calcularXPRequerida(nivel);
+      saludTxt.innerText = salud;
+      attackTxt.innerText = armas[armaActual].power + ataqueExtra;
+      defenseTxt.innerText = (armaduraActual >= 0 ? armaduras[armaduraActual].defense : 0) + defensaExtra;
+      oroTxt.innerText = oro;
+    }
+
+    // Función para mostrar pantalla de subida de nivel
+    function mostrarPantallaSubidaNivel() {
+      newLevelText.innerText = nivel;
+      levelUpScreen.style.display = "flex";
+    }
+
+    // Función para elegir mejora al subir de nivel
+    function elegirMejora(tipo) {
+      switch(tipo) {
+        case 'salud':
+          saludMaxima += 25;
+          salud = saludMaxima; // Curar completamente al subir de nivel
+          txt.innerText += `\n🎉 ¡Vida máxima aumentada a ${saludMaxima}! Te has curado completamente.`;
+          break;
+        case 'ataque':
+          ataqueExtra += 10;
+          txt.innerText += `\n🎉 ¡Ataque aumentado en 10! Ahora tienes ${armas[armaActual].power + ataqueExtra} de ataque.`;
+          break;
+        case 'defensa':
+          defensaExtra += 1;
+          txt.innerText += `\n🎉 ¡Defensa aumentada en 1! Ahora tienes ${(armaduraActual >= 0 ? armaduras[armaduraActual].defense : 0) + defensaExtra} de defensa.`;
+          break;
+      }
+      
+      levelUpScreen.style.display = "none";
+      actualizarEstadisticas();
+    }
+
+    // Función para verificar subida de nivel
+    function verificarSubidaNivel() {
+      const xpRequerida = calcularXPRequerida(nivel);
+      if (xp >= xpRequerida) {
+        nivel++;
+        xp -= xpRequerida; // Mantener XP sobrante
+        mostrarPantallaSubidaNivel();
+        return true;
+      }
+      return false;
+    }
+
+    function actualizar(loc) {
+      statsMon.style.display = "none";
+      laberintoContainer.style.display = "none";
+      [btn1.innerText, btn2.innerText, btn3.innerText] = loc["button text"];
+      [btn1.onclick, btn2.onclick, btn3.onclick] = loc["button functions"];
+      txt.innerText = loc.text;
+    }
+    
+    function irPlaza() { actualizar(ubicaciones[0]); }
+    function irTienda() { actualizar(ubicaciones[1]); }
+    function irCalles() { actualizar(ubicaciones[2]); }
+    
+    function comprarSalud() {
+      if (oro >= 10) { 
+        oro -= 10; 
+        salud = saludMaxima; 
+        actualizarEstadisticas();
+        txt.innerText = "¡Te has curado completamente!";
+      } else txt.innerText = "¡No tienes suficientes premios de gato!";
+    }
+    
+    function comprarArma() {
+      if (armaActual < armas.length-1) {
+        if (oro >= 30) {
+          oro -= 30;
+          armaActual++;
+          const arma = armas[armaActual].name;
+          inventario.push(arma);
+          txt.innerText = `Ahora tienes una ${arma}. En tu inventario: ${inventario.join(", ")}`;
+          actualizarEstadisticas();
+        } else txt.innerText = "No tienes suficientes premios de gato para comprar un arma.";
+      } else {
+        txt.innerText = "¡Ya tienes el arma más poderosa!";
+        btn2.innerText = "Vender arma por 15 premios de gato";
+        btn2.onclick = venderArma;
+      }
+    }
+    
+    function venderArma() {
+      if (inventario.length > 1) {
+        const vendida = inventario.pop();
+        oro += 15;
+        armaActual--;
+        txt.innerText = `Vendiste un ${vendida}. Inventario: ${inventario.join(", ")}`;
+        actualizarEstadisticas();
+      } else txt.innerText = "¡No puedes vender tu garrita de gato!";
+    }
+    
+    function pelearLimo() { 
+      monstruos[0] = { 
+        name: insectos[Math.floor(Math.random() * insectos.length)], 
+        level: 2, 
+        health: 15 
+      };
+      pelearCon(0); 
+    }
+    
+    function pelearBestia() { 
+      monstruos[1] = { 
+        name: secuaces[Math.floor(Math.random() * secuaces.length)], 
+        level: 8, 
+        health: 50 
+      };
+      pelearCon(1); 
+    }
+    
+    function pelearDragon() { pelearCon(2); }
+    
+    function pelearCon(i) {
+      luchando = i;
+      actualizar(ubicaciones[3]);
+      saludMonstruo = monstruos[i].health;
+      statsMon.style.display = "block";
+      nombreMon.innerText = monstruos[i].name;
+      saludMonTxt.innerText = saludMonstruo;
+    }
+    
+    function atacar() {
+      txt.innerText = `El ${monstruos[luchando].name} ataca.\nAtacas con tu ${armas[armaActual].name}.`;
+      
+      let dañoRecibido = ataquesMonstruo(monstruos[luchando].level);
+      
+      // Aplicar defensa total (armadura + extra)
+      const defensaTotal = (armaduraActual >= 0 ? armaduras[armaduraActual].defense : 0) + defensaExtra;
+      dañoRecibido = Math.max(0, dañoRecibido - defensaTotal);
+      
+      if (defensaTotal > 0) {
+        txt.innerText += `\nTu defensa (${defensaTotal}) reduce el daño.`;
+      }
+      
+      if (Math.random() > .2 || salud < 20) {
+        salud -= dañoRecibido;
+      } else {
+        txt.innerText += "\n¡Fallaste!";
+      }
+      
+      // Calcular daño total (arma + extra + aleatorio basado en XP)
+      const ataqueTotal = armas[armaActual].power + ataqueExtra + Math.floor(Math.random() * (nivel * 2)) + 1;
+      saludMonstruo -= ataqueTotal;
+      
+      actualizarEstadisticas();
+      saludMonTxt.innerText = saludMonstruo;
+      
+      if (salud <= 0) derrota();
+      else if (saludMonstruo <= 0)
+        luchando === 2 ? victoriaFinal() : victoria();
+      
+      // 5% de probabilidad de que se rompa el arma
+      if (Math.random() <= .05 && inventario.length > 1) {
+        const roto = inventario.pop();
+        armaActual--;
+        txt.innerText += `\nTu ${roto} se rompe.`;
+      }
+      
+      // 3% de probabilidad de que se rompa la armadura
+      if (Math.random() <= .03 && armaduraActual >= 0) {
+        const armaduraRota = inventarioArmaduras.splice(armaduraActual, 1)[0];
+        armaduraActual = inventarioArmaduras.length > 0 ? inventarioArmaduras.length - 1 : -1;
+        txt.innerText += `\nTu ${armaduraRota} se rompe.`;
+      }
+    }
+    
+    function ataquesMonstruo(nivel) {
+      return (nivel * 5) - Math.floor(Math.random() * (xp / 10));
+    }
+    
+    function esquivar() {
+      txt.innerText = `Esquivas el ataque del ${monstruos[luchando].name}.`;
+    }
+    
+    function victoria() {
+      oro += Math.floor(monstruos[luchando].level * 6.7);
+      xp += monstruos[luchando].level * 10; // Más XP por victoria
+      
+      // Verificar si sube de nivel
+      if (!verificarSubidaNivel()) {
+        actualizarEstadisticas();
+      }
+      
+      actualizar(ubicaciones[4]);
+    }
+    
+    function derrota() { actualizar(ubicaciones[5]); }
+    function victoriaFinal() { actualizar(ubicaciones[6]); }
+    
+    function reiniciar() {
+      xp = 0; salud = 100; saludMaxima = 100; oro = 50; armaActual = 0; armaduraActual = -1;
+      nivel = 1; ataqueExtra = 0; defensaExtra = 0;
+      inventario = ["garrita de gato"];
+      inventarioArmaduras = [];
+      actualizarEstadisticas();
+      location.reload();
+    }
+    
+    function huevoDePascua() { actualizar(ubicaciones[7]); }
+    function eligeDos() { elegir(2); }
+    function eligeOcho() { elegir(8); }
+    
+     function elegir(guess) {
+      const nums = Array.from({length:10},()=>Math.floor(Math.random()*11));
+      txt.innerText = `Elegiste ${guess}.\nNúmeros: ${nums.join(", ")}`;
+      if (nums.includes(guess)) {
+        oro += 20;
+        oroTxt.innerText = oro;
+        txt.innerText += "\n¡Acertaste! Ganas 20 premios de gato.";
+      } else {
+        salud -= 10;
+        saludTxt.innerText = salud;
+        txt.innerText += "\n¡Fallaste! Pierdes 10 puntos de vida.";
+        if (salud <= 0) derrota();
+      }
+    }
+    
+    // Funciones del laberinto
+    function robarCasa() {
+      actualizar(ubicaciones[8]);
+      laberintoContainer.style.display = "block";
+      generarLaberinto();
+    }
+    
+    function generarLaberinto() {
+      // Crear mapa 5x5
+      mapaLaberinto = [];
+      for (let y = 0; y < 5; y++) {
+        mapaLaberinto[y] = [];
+        for (let x = 0; x < 5; x++) {
+          mapaLaberinto[y][x] = null;
+        }
+      }
+      
+      // Determinar punto de entrada/salida aleatorio en el borde
+      const bordes = [
+        {x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 0}, {x: 4, y: 0}, // Fila superior
+        {x: 0, y: 4}, {x: 1, y: 4}, {x: 2, y: 4}, {x: 3, y: 4}, {x: 4, y: 4}, // Fila inferior
+        {x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}, // Columna izquierda
+        {x: 4, y: 1}, {x: 4, y: 2}, {x: 4, y: 3}  // Columna derecha
+      ];
+      
+      const entrada = bordes[Math.floor(Math.random() * bordes.length)];
+      salidaX = entrada.x;
+      salidaY = entrada.y;
+      jugadorX = salidaX;
+      jugadorY = salidaY;
+      
+      // Marcar la salida
+      mapaLaberinto[salidaY][salidaX] = "🚪";
+      
+      // Colocar objetos aleatorios (sin incluir la posición de salida)
+      const objetos = ["❤️", "⚔️", "🍖", "🛡️"];
+      const trampas = ["🔥", "💀", "🐛"];
+      const todosLosElementos = [...objetos, ...trampas];
+      
+      const numElementos = Math.floor(Math.random() * 6) + 3; // 3-8 elementos
+      
+      for (let i = 0; i < numElementos; i++) {
+        let x, y;
+        do {
+          x = Math.floor(Math.random() * 5);
+          y = Math.floor(Math.random() * 5);
+        } while (mapaLaberinto[y][x] !== null);
+        
+        mapaLaberinto[y][x] = todosLosElementos[Math.floor(Math.random() * todosLosElementos.length)];
+      }
+      
+      // Iniciar temporizador
+      tiempoInicio = Date.now();
+      iniciarTemporizador();
+      dibujarLaberinto();
+    }
+    
+    function dibujarLaberinto() {
+      laberinto.innerHTML = "";
+      
+      for (let y = 0; y < 5; y++) {
+        for (let x = 0; x < 5; x++) {
+          const celda = document.createElement("div");
+          celda.className = "celda";
+          
+          if (x === jugadorX && y === jugadorY) {
+            celda.className += " jugador";
+            celda.textContent = "🐈";
+          } else if (mapaLaberinto[y][x]) {
+            const elemento = mapaLaberinto[y][x];
+            if (elemento === "🚪") {
+              celda.className += " salida";
+            } else if (["🔥", "💀", "🐛"].includes(elemento)) {
+              celda.className += " trampa";
+            } else {
+              celda.className += " objeto";
+            }
+            celda.textContent = elemento;
+          }
+          
+          laberinto.appendChild(celda);
+        }
+      }
+    }
+    
+    function moverJugador(dx, dy) {
+      const nuevoX = jugadorX + dx;
+      const nuevoY = jugadorY + dy;
+      
+      if (nuevoX >= 0 && nuevoX < 5 && nuevoY >= 0 && nuevoY < 5) {
+        jugadorX = nuevoX;
+        jugadorY = nuevoY;
+        
+        // Verificar si hay un objeto en esta posición
+        const objeto = mapaLaberinto[jugadorY][jugadorX];
+        if (objeto && objeto !== "🚪") {
+          if (["🔥", "💀", "🐛"].includes(objeto)) {
+            activarTrampa(objeto);
+          } else {
+            recogerObjeto(objeto);
+          }
+          mapaLaberinto[jugadorY][jugadorX] = null;
+        }
+        
+        // Verificar si llegó a la salida
+        if (jugadorX === salidaX && jugadorY === salidaY && objeto === "🚪") {
+          clearInterval(temporizador);
+          txt.innerText = "¡Escapaste de la casa con éxito!";
+          setTimeout(() => irCalles(), 1500);
+          return;
+        }
+        
+        dibujarLaberinto();
+      }
+    }
+    
+    function recogerObjeto(objeto) {
+      switch (objeto) {
+        case "❤️":
+          salud = saludMaxima;
+          saludTxt.innerText = salud;
+          txt.innerText = "¡Encontraste un corazón! Te has curado al 100%.";
+          break;
+        case "⚔️":
+          if (armaActual < armas.length - 1) {
+            armaActual++;
+            const arma = armas[armaActual].name;
+            inventario.push(arma);
+            txt.innerText = `¡Encontraste una espada! Ahora tienes una ${arma}.`;
+          } else {
+            oro += 20;
+            oroTxt.innerText = oro;
+            txt.innerText = "¡Encontraste una espada! Como ya tienes la mejor, la vendes por 20 premios de gato.";
+          }
+          break;
+        case "🍖":
+          const premiosEncontrados = Math.floor(Math.random() * 30) + 1;
+          oro += premiosEncontrados;
+          oroTxt.innerText = oro;
+          txt.innerText = `¡Encontraste pienso de gato! Obtienes ${premiosEncontrados} premios de gato.`;
+          break;
+        case "🛡️":
+          if (armaduraActual < armaduras.length - 1) {
+            armaduraActual++;
+            const armadura = armaduras[armaduraActual].name;
+            inventarioArmaduras.push(armadura);
+            txt.innerText = `¡Encontraste un casco! Ahora tienes una ${armadura} (defensa: ${armaduras[armaduraActual].defense}).`;
+          } else {
+            oro += 25;
+            oroTxt.innerText = oro;
+            txt.innerText = "¡Encontraste un casco! Como ya tienes la mejor armadura, lo vendes por 25 premios de gato.";
+          }
+          break;
+      }
+    }
+    
+    function salirLaberinto() {
+      clearInterval(temporizador);
+      irCalles();
+    }
+    
+    function iniciarTemporizador() {
+      temporizador = setInterval(() => {
+        const tiempoTranscurrido = Date.now() - tiempoInicio;
+        const tiempoRestante = Math.max(0, tiempoLimite - tiempoTranscurrido);
+        
+        temporizadorDiv.textContent = `Tiempo: ${Math.ceil(tiempoRestante / 1000)}s`;
+        
+        if (tiempoRestante <= 0) {
+          clearInterval(temporizador);
+          txt.innerText = "¡Se acabó el tiempo! Un secuaz te encuentra...";
+          setTimeout(() => {
+            // Pelear contra secuaz
+            monstruos[1] = { 
+              name: secuaces[Math.floor(Math.random() * secuaces.length)], 
+              level: 8, 
+              health: 50 
+            };
+            pelearCon(1);
+          }, 2000);
+        }
+      }, 100);
+    }
+    
+    function activarTrampa(trampa) {
+      switch (trampa) {
+        case "🔥":
+          salud = Math.max(0, salud - 20);
+          saludTxt.innerText = salud;
+          txt.innerText = "¡Pisaste fuego! Pierdes 20 puntos de salud.";
+          if (salud <= 0) {
+            clearInterval(temporizador);
+            derrota();
+            return;
+          }
+          break;
+        case "💀":
+          salud = Math.max(0, salud - 20);
+          saludTxt.innerText = salud;
+          txt.innerText = "¡Comida envenenada! Pierdes 20 puntos de salud.";
+          if (salud <= 0) {
+            clearInterval(temporizador);
+            derrota();
+            return;
+          }
+          break;
+        case "🐛":
+          clearInterval(temporizador);
+          txt.innerText = "¡Un bicho te ataca!";
+          setTimeout(() => {
+            // Pelear contra bicho
+            monstruos[0] = { 
+              name: insectos[Math.floor(Math.random() * insectos.length)], 
+              level: 2, 
+              health: 15 
+            };
+            pelearCon(0);
+          }, 1500);
+          break;
+      }
+    }
+  </script>
+</body>
+</html>

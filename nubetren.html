@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nubificador de Tren</title>
+  <style>
+    /* Fuente más estilizada */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 1.8s ease-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #0077cc;
+      font-size: 2.4em;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="time"], select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      transition: border 0.3s;
+    }
+
+    input[type="time"]:focus, select:focus {
+      border-color: #0077cc;
+      outline: none;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 8px;
+      transform: scale(1.2);
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      width: 100%;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      background: #f0f9ff;
+      border-left: 5px solid #0077cc;
+      border-radius: 10px;
+      color: #004466;
+      font-size: 1em;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<div id="emoji-background"></div>
+
+<script>
+  const emojiContainer = document.getElementById('emoji-background');
+  const emojis = ['☁️', '😺', '❤️'];
+  const numEmojis = 100;
+  const emojiElements = [];
+
+  Object.assign(emojiContainer.style, {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: '-1',
+    overflow: 'hidden',
+    pointerEvents: 'none'
+  });
+
+  // Physics settings
+  const damping = 0.99;
+  const bounceLoss = 0.5;
+  const groundFriction = 0.95;
+  const baseGravity = { x: 0, y: 0.1 }; // gravity when active
+
+  // Gravity delay range in seconds (change here easily)
+  const gravityDelayMin = 5;
+  const gravityDelayMax = 15;
+
+  // Generate emojis
+  for (let i = 0; i < numEmojis; i++) {
+    const emoji = document.createElement('div');
+    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const fontSize = Math.random() * 60 + 12;
+    emoji.style.position = 'absolute';
+    emoji.style.fontSize = `${fontSize}px`;
+
+    const pos = {
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight
+    };
+
+    const velocity = {
+      x: (Math.random() - 0.5) * 4,
+      y: (Math.random() - 0.5) * 4
+    };
+
+    const rotation = Math.random() * 360;
+    const rotationSpeed = (Math.random() - 0.5) * 2; // degrees per frame
+
+    // Random gravity delay time in ms for each emoji
+    const gravityDelay = (Math.random() * (gravityDelayMax - gravityDelayMin) + gravityDelayMin) * 100;
+
+    emojiContainer.appendChild(emoji);
+    emojiElements.push({ el: emoji, pos, velocity, rotation, rotationSpeed, gravityDelay, gravityActive: false, gravityVector: { x: 0, y: 0 } });
+  }
+
+  // Animate
+  function animate(timestamp = 0) {
+    for (const obj of emojiElements) {
+      const { el, pos, velocity } = obj;
+
+      // Activate gravity after delay
+      if (!obj.gravityActive) {
+        obj.gravityDelay -= 10.00; // approximate frame duration ~60fps
+        if (obj.gravityDelay <= 0) {
+          obj.gravityActive = true;
+          obj.gravityVector = { ...baseGravity };
+        }
+      }
+
+      // Apply gravity only if active
+      if (obj.gravityActive) {
+        velocity.x += obj.gravityVector.x;
+        velocity.y += obj.gravityVector.y;
+      }
+
+      // Apply damping
+      velocity.x *= damping;
+      velocity.y *= damping;
+
+      // Move
+      pos.x += velocity.x;
+      pos.y += velocity.y;
+
+      const maxX = window.innerWidth - el.offsetWidth;
+      const maxY = window.innerHeight - el.offsetHeight;
+
+      // Collision with walls
+      if (pos.x < 0 || pos.x > maxX) {
+        velocity.x *= -1;
+        pos.x = Math.max(0, Math.min(pos.x, maxX));
+      }
+
+      if (pos.y < 0 || pos.y > maxY) {
+        velocity.y *= -1;
+        pos.y = Math.max(0, Math.min(pos.y, maxY));
+      }
+
+      // Stickiness on walls (optional)
+      if (Math.abs(velocity.x) < 0.05) velocity.x = 0;
+      if (Math.abs(velocity.y) < 0.05) velocity.y = 0;
+
+      // Update rotation
+      obj.rotation += obj.rotationSpeed;
+      el.style.transform = `translate(${pos.x}px, ${pos.y}px) rotate(${obj.rotation}deg)`;
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  // Device orientation → gravity vector (updates gravityVector for each emoji if active)
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', (event) => {
+      const tiltX = event.gamma; // left to right [-90,90]
+      const tiltY = event.beta;  // front to back [-180,180]
+
+      // Convert to gravity direction (tweak sensitivity as needed)
+      const newGravity = { x: (tiltX || 0) / 45, y: (tiltY || 0) / 45 };
+
+      // Update gravity vector only for emojis where gravity is active
+      emojiElements.forEach(obj => {
+        if (obj.gravityActive) {
+          obj.gravityVector = newGravity;
+        }
+      });
+    });
+  }
+
+  // Optional: Shake detection
+  let lastX, lastY, lastZ;
+  const shakeThreshold = 15;
+
+  window.addEventListener('devicemotion', function (event) {
+    if (!event.accelerationIncludingGravity) return;
+
+    const { x, y, z } = event.accelerationIncludingGravity;
+
+    if (lastX !== undefined) {
+      const delta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+
+      if (delta > shakeThreshold) {
+        // SHAKE DETECTED!
+        emojiElements.forEach(obj => {
+          obj.velocity.x += (Math.random() - 0.5) * 30;
+          obj.velocity.y += (Math.random() - 0.5) * 30;
+          obj.rotationSpeed += (Math.random() - 0.5) * 10;
+        });
+      }
+    }
+
+    lastX = x;
+    lastY = y;
+    lastZ = z;
+  });
+</script>
+
+<body>
+
+<form id="plannerForm">
+  <h2>NUBIFICADOR DE SALIDA PARA TREN</h2>
+
+  <label for="startTime">Hora de entrada al nubajo (HH:MM)</label>
+  <input type="time" id="startTime" required>
+
+  <label for="dayOfWeek">Día de la semana</label>
+  <select id="dayOfWeek">
+    <option value="Lunes">Lunes</option>
+    <option value="Martes">Martes</option>
+    <option value="Miércoles">Miércoles</option>
+    <option value="Jueves">Jueves</option>
+    <option value="Viernes">Viernes</option>
+    <option value="Sábado">Sábado</option>
+    <option value="Domingo">Domingo</option>
+  </select>
+
+  <label style="margin-top: 20px;">
+    <input type="checkbox" id="bankHoliday"> ¿Es festivo?
+  </label>
+
+  <button type="submit">Calcular</button>
+
+  <div class="result" id="resultBox"></div>
+  
+  <button type="button" id="goToGameButton">Fortuna del Día</button>
+
+  <a href="gatorescatanube.html" style="text-decoration: none;">
+    <button type="button" style="margin-top: 12px;">Ir a "Gato Rescata Nube"</button>
+  </a>
+
+    <a href="liberadordegatitos.html" style="text-decoration: none;">
+    <button type="button" style="margin-top: 12px;">Ir a "El Liberador de Gatitos"</button>
+  </a>
+
+      <a href="restaurantefelino.html" style="text-decoration: none;">
+    <button type="button" style="margin-top: 12px;">Ir a "Restaurante Felino"</button>
+  </a>
+</form>
+
+
+<script>
+  const weekdayTrains = ["05:51", "06:01", "06:11", "06:21", "06:41", "06:51", "07:01", "07:11", "07:21", "07:31", "07:41", "07:51", "08:01", "08:11", "08:21", "08:41", "08:51", "09:01", "09:11", "09:31", "09:51", "10:11", "10:31", "10:51", "11:11", "11:31", "11:51", "12:11", "12:31", "12:51", "13:11", "13:21", "13:41", "13:51", "14:01", "14:21", "14:31", "14:41", "14:51", "15:01", "15:11", "15:21", "15:31", "15:41", "15:51", "16:01", "16:21", "16:31", "16:41", "16:51", "17:01", "17:11", "17:21", "17:31", "17:46", "18:01", "18:16", "18:36", "18:56", "19:16", "19:36", "19:56", "20:16", "20:36", "20:56", "21:16", "21:36", "22:21"];
+  const weekendTrains = ["06:11", "06:41", "07:11", "07:41", "08:11", "08:41", "09:11", "09:41", "10:11", "10:41", "11:11", "11:41", "12:11", "12:41", "13:11", "13:41", "14:11", "14:41", "15:11", "15:41", "16:11", "16:41", "17:11", "17:41", "18:11", "18:41", "19:11", "19:41", "20:11", "20:41", "21:11", "21:41", "22:11"];
+
+  function timeToMinutes(timeStr) {
+    const [h, m] = timeStr.split(":").map(Number);
+    return h * 60 + m;
+  }
+
+  function minutesToTime(mins) {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  document.getElementById("plannerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const startTimeStr = document.getElementById("startTime").value;
+    const dayOfWeek = document.getElementById("dayOfWeek").value;
+    const isHoliday = document.getElementById("bankHoliday").checked;
+
+    const startTimeMinutes = timeToMinutes(startTimeStr);
+    const cutoffTime = startTimeMinutes - 21;
+
+    let schedule = (isHoliday || dayOfWeek === "Sábado" || dayOfWeek === "Domingo")
+      ? weekendTrains
+      : weekdayTrains;
+
+    const validTrains = schedule
+      .map(t => ({ time: t, minutes: timeToMinutes(t) }))
+      .filter(train => train.minutes <= cutoffTime);
+
+    const resultBox = document.getElementById("resultBox");
+
+    if (validTrains.length === 0) {
+      resultBox.innerHTML = `<strong>¡No encontré un tren adecuado!</strong><br>Es posible que llegues tarde. 😬`;
+      return;
+    }
+
+    const selectedTrain = validTrains[validTrains.length - 1];
+    const leaveHome = selectedTrain.minutes - 21;
+
+resultBox.innerHTML = `
+  <strong>Tren recomendado:</strong> ${selectedTrain.time}<br>
+  <strong>Hora para salir de nido a pata:</strong> ${minutesToTime(leaveHome)}<br>
+  <strong>Hora para salir de nido en moto:</strong> ${minutesToTime(leaveHome + 10)}
+`;
+  });
+
+    document.getElementById('goToGameButton').addEventListener('click', () => {
+    window.location.href = 'miyutarot.html';
+  });
+</script>
+
+</body>
+</html>
