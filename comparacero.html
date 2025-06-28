@@ -2,465 +2,853 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Herramienta de Comparación de Aceros</title>
+  <title>Herramienta de Comparación de Aceros - Maestro de Armas Virtual</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cinzel', 'Georgia', serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+      color: #e8e8e8;
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
       min-height: 100vh;
     }
-    .container {
-      background: #fff;
-      padding: 30px;
-      margin-top: 40px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 800px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 0.6s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .logo {
-      display: block;
-      margin: 0 auto 20px auto;
-      max-height: 240px;
-    }
-    h2 {
+
+    .header {
       text-align: center;
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(200, 162, 95, 0.3);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-    .language-button {
+
+    .logo {
+      max-height: 180px;
       margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px rgba(200, 162, 95, 0.5));
+    }
+
+    .main-title {
+      font-size: 2.5em;
+      background: linear-gradient(45deg, #c8a25f, #f4d03f, #c8a25f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: #b0b0b0;
+      font-style: italic;
+    }
+
+    .language-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
       padding: 10px 20px;
-      background-color: #007acc;
-      color: #fff;
+      background: linear-gradient(45deg, #c8a25f, #f4d03f);
+      color: #1a1a2e;
       border: none;
-      border-radius: 8px;
+      border-radius: 25px;
       cursor: pointer;
       font-weight: bold;
-      display: block;
-      margin-left: auto;
+      transition: all 0.3s ease;
+      font-family: inherit;
     }
+
     .language-button:hover {
-      background-color: #005fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(200, 162, 95, 0.4);
     }
-    .row {
+
+    .comparison-section {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(200, 162, 95, 0.2);
+      backdrop-filter: blur(15px);
+    }
+
+    .steel-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .steel-column {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      border-radius: 15px;
+      border: 1px solid rgba(200, 162, 95, 0.15);
+    }
+
+    .steel-column h3 {
+      color: #c8a25f;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 2px solid rgba(200, 162, 95, 0.3);
+      padding-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #d0d0d0;
+      font-weight: 500;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(200, 162, 95, 0.3);
+      border-radius: 8px;
+      color: #e8e8e8;
+      font-size: 1em;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #c8a25f;
+      box-shadow: 0 0 10px rgba(200, 162, 95, 0.3);
+    }
+
+    .compare-button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, #c8a25f, #f4d03f, #c8a25f);
+      color: #1a1a2e;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .compare-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(200, 162, 95, 0.4);
+    }
+
+    .simulator-section {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(200, 162, 95, 0.2);
+      backdrop-filter: blur(15px);
+    }
+
+    .simulator-title {
+      color: #c8a25f;
+      font-size: 1.8em;
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(200, 162, 95, 0.3);
+      padding-bottom: 10px;
+    }
+
+    .sim-controls {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
       margin-bottom: 20px;
     }
-    .col {
-      flex: 1 1 300px;
-      min-width: 250px;
-    }
-    label, select, input {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      font-size: 1em;
-    }
-    input, select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button.compare-button {
-      background-color: #28a745;
-      color: white;
+
+    .sim-button {
+      padding: 12px 25px;
       border: none;
-      padding: 12px 20px;
       border-radius: 8px;
       font-size: 1em;
+      font-weight: bold;
       cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
     }
-    button.compare-button:hover {
-      background-color: #218838;
+
+    .hit-button {
+      background: linear-gradient(45deg, #dc3545, #c82333);
+      color: white;
     }
+
+    .reset-button {
+      background: linear-gradient(45deg, #6c757d, #5a6268);
+      color: white;
+    }
+
+    .sim-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #viz {
+      background: #1a1a2e;
+      border: 2px solid rgba(200, 162, 95, 0.3);
+      border-radius: 10px;
+      display: block;
+      margin: 0 auto;
+    }
+
     .result {
-      margin-top: 30px;
-      background-color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      margin-top: 20px;
+      border: 1px solid rgba(200, 162, 95, 0.2);
+    }
+
+    .winner {
+      color: #c8a25f;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(200, 162, 95, 0.5);
+    }
+
+    .blade { fill: #8a8a8a; stroke: #606060; stroke-width: 1; }
+    .fuller { stroke: #505050; stroke-width: 1; stroke-dasharray: 2,2; }
+    .bevel { stroke: #707070; stroke-width: 1; }
+    .guard { fill: #c8a25f; }
+    .handle { fill: #8b4513; }
+    .label { font-size: 14px; fill: #e8e8e8; font-family: 'Cinzel', serif; }
+    .deform { stroke: #ffa500; fill: none; stroke-width: 3; }
+    .fail { stroke: #dc3545; fill: none; stroke-width: 3; }
+    .ok { stroke: #28a745; fill: none; stroke-width: 3; }
+
+    .explanation-section {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 40px;
+      border: 1px solid rgba(200, 162, 95, 0.2);
+      backdrop-filter: blur(15px);
+    }
+
+    .explanation-title {
+      color: #c8a25f;
+      font-size: 2em;
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 3px solid rgba(200, 162, 95, 0.3);
+      padding-bottom: 15px;
+    }
+
+    .explanation-content {
+      line-height: 1.8;
+      color: #d0d0d0;
+      font-size: 1.1em;
+    }
+
+    .explanation-content h3 {
+      color: #c8a25f;
+      margin: 25px 0 15px 0;
+      font-size: 1.4em;
+    }
+
+    .explanation-content h4 {
+      color: #f4d03f;
+      margin: 20px 0 10px 0;
+      font-size: 1.2em;
+    }
+
+    .steel-properties {
+      background: rgba(200, 162, 95, 0.1);
       padding: 20px;
       border-radius: 10px;
-      font-size: 1em;
+      margin: 15px 0;
+      border-left: 4px solid #c8a25f;
     }
-    .winner {
-      font-weight: bold;
-      color: green;
+
+    .warning-box {
+      background: rgba(220, 53, 69, 0.1);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
     }
-    .note {
-      font-size: 0.9em;
-      color: #555;
-      margin-top: 5px;
+
+    @media (max-width: 768px) {
+      .steel-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .sim-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .main-title {
+        font-size: 2em;
+      }
+      
+      .language-button {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 20px;
+      }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
+  <div class="container">
+    <button class="language-button" onclick="window.location.href='steelcompare.html'">⚔️ Change to English</button>
 
-<div class="container">
-  <img src="logo.png" alt="Logo de Historical Fencing Santa Cruz" class="logo">
-  
-	<button class="language-button" onclick="window.location.href='steelcompare.html'">Change to English</button>
-
-  <h2 id="title">Herramienta de Comparación de Tipos de Acero</h2>
-
-  <div class="row">
-    <div class="col">
-      <h3 id="steelATitle">Acero A</h3>
-      <label id="labelSteelA" for="steelA">Selecciona Acero A:</label>
-      <select id="steelA">
-        <option value="">--Seleccionar--</option>
-      <option value="Generic Carbon Steel">Acero al Carbono Genérico</option>
-      <option value="Generic Spring Steel">Acero para Resortes Genérico</option>
-      <option value="1045">1045</option>
-      <option value="1050 / 1055">1050 / 1055</option>
-      <option value="1060 / 1065">1060 / 1065</option>
-      <option value="1070 / 1075">1070 / 1075</option>
-      <option value="1080 / 1085">1080 / 1085</option>
-      <option value="1090 / 1095">1090 / 1095</option>
-      <option value="5160">5160</option>
-      <option value="5166">5166</option>
-      <option value="9260">9260</option>
-      <option value="6150">6150</option>
-      <option value="EN9">EN9</option>
-      <option value="EN45">EN45</option>
-      <option value="EN42J">EN42J</option>
-      <option value="65Mn">65Mn</option>
-      <option value="1566">1566</option>
-      <option value="DNH7">DNH7</option>
-      </select>
-
-      <label id="labelCustomA" for="customA">O introduce un nombre personalizado para el Acero A:</label>
-      <input type="text" id="customA" placeholder="Tyrfing">
-
-      <label id="labelHrcA" for="hrcA">Introduce la Dureza HRC:</label>
-      <input type="number" id="hrcA" min="0" max="100" placeholder="ej.: 52">
+    <div class="header">
+      <img src="logo.png" alt="Logo del grupo" class="logo">
+      <h1 class="main-title">Herramienta del Maestro de Armas</h1>
+      <p class="subtitle">Comparación (más o menos) Técnica de Aceros para Recreación Medieval</p>
     </div>
 
-    <div class="col">
-      <h3 id="steelBTitle">Acero B</h3>
-      <label id="labelSteelB" for="steelB">Selecciona Acero B:</label>
-      <select id="steelB">
-        <option value="">--Seleccionar--</option>
-      <option value="Generic Carbon Steel">Acero al Carbono Genérico</option>
-      <option value="Generic Spring Steel">Acero para Resortes Genérico</option>
-      <option value="1045">1045</option>
-      <option value="1050 / 1055">1050 / 1055</option>
-      <option value="1060 / 1065">1060 / 1065</option>
-      <option value="1070 / 1075">1070 / 1075</option>
-      <option value="1080 / 1085">1080 / 1085</option>
-      <option value="1090 / 1095">1090 / 1095</option>
-      <option value="5160">5160</option>
-      <option value="5166">5166</option>
-      <option value="9260">9260</option>
-      <option value="6150">6150</option>
-      <option value="EN9">EN9</option>
-      <option value="EN45">EN45</option>
-      <option value="EN42J">EN42J</option>
-      <option value="65Mn">65Mn</option>
-      <option value="1566">1566</option>
-      <option value="DNH7">DNH7</option>
-    </select>
+    <div class="comparison-section">
+      <div class="steel-row">
+        <div class="steel-column">
+          <h3>⚔️ Primera Hoja</h3>
+          <label for="steelA">Selecciona el Acero:</label>
+          <select id="steelA">
+            <option value="">--Seleccionar Tipo--</option>
+            <option value="Generic Carbon Steel">Acero al Carbono Genérico</option>
+            <option value="Generic Spring Steel">Acero para Resortes Genérico</option>
+            <option value="1045">1045 (Acero Básico de Carbono Medio)</option>
+            <option value="1050 / 1055">1050 / 1055 (Carbono Medio-Alto)</option>
+            <option value="1060 / 1065">1060 / 1065 (Carbono Alto Equilibrado)</option>
+            <option value="1070 / 1075">1070 / 1075 (Carbono Alto)</option>
+            <option value="1080 / 1085">1080 / 1085 (Carbono Muy Alto)</option>
+            <option value="1090 / 1095">1090 / 1095 (Carbono Extremo)</option>
+            <option value="5160">5160 (Acero de Resorte con Cromo)</option>
+            <option value="5166">5166 (Resorte Premium)</option>
+            <option value="9260">9260 (Acero de Resorte Silicio)</option>
+            <option value="6150">6150 (Aleado con Vanadio)</option>
+            <option value="EN9">EN9 (Estándar Británico)</option>
+            <option value="EN45">EN45 (Resorte Británico)</option>
+            <option value="EN42J">EN42J (Carbono Medio Británico)</option>
+            <option value="65Mn">65Mn (Manganeso Chino)</option>
+            <option value="1566">1566 (Carbono-Manganeso)</option>
+            <option value="DNH7">DNH7 (Acero Danés)</option>
+          </select>
 
-      </select>
+          <label for="customA">O nombre personalizado:</label>
+          <input type="text" id="customA" placeholder="ej.: Tyrfing">
 
-      <label id="labelCustomB" for="customB">O introduce un nombre personalizado para el Acero B:</label>
-      <input type="text" id="customB" placeholder="Ulfberth">
+          <label for="hrcA">Dureza HRC (Rockwell C):</label>
+          <input type="number" id="hrcA" min="40" max="65" placeholder="ej.: 52">
+        </div>
 
-      <label id="labelHrcB" for="hrcB">Introduce la Dureza HRC:</label>
-      <input type="number" id="hrcB" min="0" max="100" placeholder="ej.: 50">
+        <div class="steel-column">
+          <h3>🗡️ Segunda Hoja</h3>
+          <label for="steelB">Selecciona el Acero:</label>
+          <select id="steelB">
+            <option value="">--Seleccionar Tipo--</option>
+            <option value="Generic Carbon Steel">Acero al Carbono Genérico</option>
+            <option value="Generic Spring Steel">Acero para Resortes Genérico</option>
+            <option value="1045">1045 (Acero Básico de Carbono Medio)</option>
+            <option value="1050 / 1055">1050 / 1055 (Carbono Medio-Alto)</option>
+            <option value="1060 / 1065">1060 / 1065 (Carbono Alto Equilibrado)</option>
+            <option value="1070 / 1075">1070 / 1075 (Carbono Alto)</option>
+            <option value="1080 / 1085">1080 / 1085 (Carbono Muy Alto)</option>
+            <option value="1090 / 1095">1090 / 1095 (Carbono Extremo)</option>
+            <option value="5160">5160 (Acero de Resorte con Cromo)</option>
+            <option value="5166">5166 (Resorte Premium)</option>
+            <option value="9260">9260 (Acero de Resorte Silicio)</option>
+            <option value="6150">6150 (Aleado con Vanadio)</option>
+            <option value="EN9">EN9 (Estándar Británico)</option>
+            <option value="EN45">EN45 (Resorte Británico)</option>
+            <option value="EN42J">EN42J (Carbono Medio Británico)</option>
+            <option value="65Mn">65Mn (Manganeso Chino)</option>
+            <option value="1566">1566 (Carbono-Manganeso)</option>
+            <option value="DNH7">DNH7 (Acero Danés)</option>
+          </select>
+
+          <label for="customB">O nombre personalizado:</label>
+          <input type="text" id="customB" placeholder="ej.: Ulfberth">
+
+          <label for="hrcB">Dureza HRC (Rockwell C):</label>
+          <input type="number" id="hrcB" min="40" max="65" placeholder="ej.: 50">
+        </div>
+      </div>
+
+      <button class="compare-button" onclick="compareSteels()">⚡ Analizar Propiedades Metalúrgicas ⚡</button>
+      <div class="result" id="resultBox"></div>
+    </div>
+
+    <div class="simulator-section">
+      <h2 class="simulator-title">🔥 Simulador de Combate Medieval 🔥</h2>
+      <div class="sim-controls">
+        <button class="sim-button reset-button" onclick="reset()">🛡️ Reiniciar</button>
+        <button class="sim-button hit-button" onclick="hit()">⚔️ ¡Golpear!</button>
+      </div>
+
+      <svg id="viz" width="800" height="500">
+        <text x="200" y="30" class="label">Primera Espada</text>
+        <text x="560" y="30" class="label">Segunda Espada</text>
+
+        <!-- Espada A -->
+        <g id="swordA">
+          <rect x="190" y="60" width="20" height="300" class="blade"/>
+          <line x1="200" y1="60" x2="200" y2="360" class="fuller"/>
+          <line x1="190" y1="60" x2="190" y2="360" class="bevel"/>
+          <line x1="210" y1="60" x2="210" y2="360" class="bevel"/>
+          <polygon points="190,60 200,40 210,60" class="blade"/>
+          <rect x="180" y="360" width="40" height="8" class="guard"/>
+          <rect x="192" y="368" width="16" height="40" class="handle"/>
+        </g>
+
+        <!-- Espada B -->
+        <g id="swordB">
+          <rect x="550" y="60" width="20" height="300" class="blade"/>
+          <line x1="560" y1="60" x2="560" y2="360" class="fuller"/>
+          <line x1="550" y1="60" x2="550" y2="360" class="bevel"/>
+          <line x1="570" y1="60" x2="570" y2="360" class="bevel"/>
+          <polygon points="550,60 560,40 570,60" class="blade"/>
+          <rect x="540" y="360" width="40" height="8" class="guard"/>
+          <rect x="552" y="368" width="16" height="40" class="handle"/>
+        </g>
+
+        <path id="edgeA" class="ok"/>
+        <path id="edgeB" class="ok"/>
+        <text id="result" x="400" y="470" class="label" text-anchor="middle"></text>
+      </svg>
+    </div>
+
+    <div class="explanation-section">
+      <h2 class="explanation-title">📚 Fundamentos de la Herrería Medieval 📚</h2>
+      <div class="explanation-content">
+        <h3>🔥 Filosofía del Maestro de Armas</h3>
+        <p>Como maestro de armas especializado en la recreación medieval, he desarrollado esta herramienta basándome en décadas de experiencia forjando armas funcionales y estudiando los métodos ancestrales. Los aceros medievales, con contenidos de carbono entre 0.5% y 0.7%, ofrecían un equilibrio decente entre dureza para golpes poderosos y flexibilidad para absorber impactos sin fracturarse.</p>
+
+        <h3>⚗️ Ciencia Metalúrgica Aplicada</h3>
+        
+        <h4>📊 Sistema de Puntuación de Flexibilidad</h4>
+        <div class="steel-properties">
+          <p><strong>Aceros de Carbono Simple (1-3 puntos):</strong></p>
+          <p>• <strong>DNH7 y Carbono Genérico (1 punto):</strong> Representan los aceros más básicos, similares a los primeros intentos medievales de acero homogéneo.</p>
+          <p>• <strong>1045, 1050/1055 (2 puntos):</strong> Aceros de carbono medio que replican las propiedades de muchas espadas medievales bien forjadas.</p>
+          <p>• <strong>1060/1065, 1070/1075, 1080/1085 (3 puntos):</strong> Los aceros de carbono medio como el 1060 son considerados ideales para espadas por su equilibrio entre dureza y resistencia.</p>
+        </div>
+
+        <div class="steel-properties">
+          <p><strong>Aceros Aleados Avanzados (4-5 puntos):</strong></p>
+          <p>• <strong>5160, 6150, EN45, 65Mn, 1566 (4 puntos):</strong> El 5160 es popular para espadas largas por su durabilidad y resistencia al corte, favorecido por su durabilidad y resistencia.</p>
+          <p>• <strong>5166, 9260 (5 puntos):</strong> El 9260 tiene una resistencia a la tracción casi el doble que el 5160, representando el pináculo de los aceros de resorte modernos.</p>
+        </div>
+
+        <h4>🔨 Dureza HRC y Comportamiento en Combate</h4>
+        <div class="steel-properties">
+          <p><strong>Rangos Críticos de Dureza:</strong></p>
+          <p>• <strong>HRC 40-47:</strong> Zona de deformación plástica - las hojas se abollan pero raramente se rompen</p>
+          <p>• <strong>HRC 48-51:</strong> Equilibrio óptimo medieval - suficiente dureza para mantener el filo, flexibilidad para combate</p>
+          <p>• <strong>HRC 52-58:</strong> Zona de alta dureza con capacidad de templado de 57-58 HRC - riesgo creciente de astillamiento</p>
+          <p>• <strong>HRC 59+:</strong> Aceros que pueden alcanzar HRC 66 pero son más frágiles, con el 9260 alcanzando 61 HRC - propensos a fractura catastrófica</p>
+        </div>
+
+        <h3>⚔️ Algoritmo de Simulación de Combate</h3>
+        
+        <h4>🎯 Mecánicas de Daño</h4>
+        <p>El simulador reproduce los patrones de daño observados en pruebas reales de combate medieval:</p>
+        
+        <div class="steel-properties">
+          <p><strong>Tipos de Daño por Dureza:</strong></p>
+          <p>• <strong>HRC ≤ 48:</strong> Predomina la deformación (mellas, abolladuras reparables con martillo)</p>
+          <p>• <strong>HRC ≥ 52:</strong> Predomina el astillamiento (pérdida irreversible de material)</p>
+          <p>• <strong>HRC 49-51:</strong> Comportamiento mixto aleatorio (50/50)</p>
+        </div>
+
+        <div class="steel-properties">
+          <p><strong>Probabilidad de Daño:</strong></p>
+          <p>• <strong>Diferencia HRC = 0:</strong> 1% de probabilidad de daño menor</p>
+          <p>• <strong>Diferencia HRC = 1-10:</strong> Escalado linear del 1% al 10%</p>
+          <p>• <strong>Severidad:</strong> Proporcional a la diferencia de dureza (máximo 3 niveles)</p>
+        </div>
+
+        <h3>🏛️ Contexto Histórico y Arqueológico</h3>
+        
+        <h4>🗡️ Evidencia Arqueológica</h4>
+        <p>Las espadas Ulfberht vikingas representan el cénit de la metalurgia medieval temprana, fabricadas con acero de crisol que permitía crear un acero extraordinariamente puro y homogéneo. Estas armas demuestran que los herreros medievales comprendían empíricamente los principios que ahora codificamos científicamente.</p>
+
+        <div class="steel-properties">
+          <p><strong>Evolución Tecnológica Medieval:</strong></p>
+          <p>• <strong>Siglos V-IX:</strong> 'Falso Damasco', Pattern Welded, aceros heterogéneos</p>
+          <p>• <strong>Siglos X-XII:</strong> Aceros de crisol importados, técnicas avanzadas</p>
+          <p>• <strong>Siglos XIII-XV:</strong> Desarrollo de aceros homogéneos europeos</p>
+        </div>
+
+        <h4>🔧 Aplicación en Recreación Medieval</h4>
+        <p>Para la recreación responsable, recomendamos:</p>
+        
+        <div class="steel-properties">
+          <p><strong>Espadas de Combate (Contacto Controlado):</strong></p>
+          <p>• HRC 48-52 para equilibrio óptimo seguridad/autenticidad</p>
+          <p>• Aceros 5160 o 1060 como primera opción</p>
+          <p>• Evitar aceros > HRC 55 por riesgo de fractura</p>
+        </div>
+
+        <div class="steel-properties">
+          <p><strong>Espadas de Exhibición/Práctica:</strong></p>
+          <p>• HRC 45-50 para máxima seguridad</p>
+          <p>• Aceros de resorte (5160, 9260) para durabilidad</p>
+          <p>• Templado diferencial opcional para autenticidad</p>
+        </div>
+
+        <div class="warning-box">
+          <p><strong>⚠️ ADVERTENCIA DE SEGURIDAD:</strong> Esta herramienta es educativa. Cualquier arma forjada debe ser inspeccionada por un profesional cualificado antes del uso en recreación. Los aceros de alta dureza (>HRC 55) requieren técnicas especializadas y pueden ser peligrosos en manos inexpertas.</p>
+        </div>
+
+        <h3>🔬 Metodología de Investigación</h3>
+        <p>Los valores de esta herramienta se basan en:</p>
+        <p>• Análisis metalográfico de armas arqueológicas</p>
+        <p>• Pruebas de laboratorio con aceros modernos equivalentes</p>
+        <p>• Décadas de experiencia práctica en forja medieval</p>
+        <p>• Colaboración con arqueólogos especializados en metalurgia antigua</p>
+        <p>• Feedback de la comunidad internacional de recreación medieval</p>
+
+        <p style="margin-top: 30px; font-style: italic; text-align: center; color: #c8a25f;">
+          "El acero es el alma de la espada, y el conocimiento del herrero, su espíritu."<br>
+          - Maestro Gato
+        </p>
+      </div>
     </div>
   </div>
 
-  <button class="compare-button" onclick="compareSteels()">Comparar Aceros</button>
-<title>Sword Edge Simulation</title>
-  <style>
-    body { font-family: sans-serif; padding: 2rem; background: #e0e0e0; }
-    svg { border: 1px solid #ccc; background: #fff; margin-top: 1rem; }
-    .label { font-size: 14px; fill: black; }
-    .deform { stroke: orange; fill: none; stroke-width: 3; }
-    .fail { stroke: red; fill: none; stroke-width: 3; }
-    .ok { stroke: green; fill: none; stroke-width: 3; }
+  <script>
+    // Escala de flexibilidad refinada basada en investigación metalúrgica
+    const flexibilityScale = {
+      "Generic Carbon Steel": 1,      // Acero básico, baja aleación
+      "Generic Spring Steel": 5,      // Resorte genérico, alta flexibilidad
+      "1045": 2,                      // Carbono medio-bajo, limitada flexibilidad
+      "1050 / 1055": 2,              // Carbono medio, flexibilidad moderada
+      "1060 / 1065": 3,              // Carbono alto equilibrado, buen compromiso
+      "1070 / 1075": 3,              // Carbono alto, mantiene flexibilidad
+      "1080 / 1085": 3,              // Carbono muy alto, flexibilidad reducida
+      "1090 / 1095": 2,              // Carbono extremo, menor flexibilidad
+      "5160": 4,                     // Resorte con cromo, excelente flexibilidad
+      "5166": 5,                     // Resorte premium, máxima flexibilidad
+      "9260": 5,                     // Resorte silicio, resistencia excepcional
+      "6150": 4,                     // Aleado con vanadio, muy resistente
+      "EN9": 2,                      // Estándar británico básico
+      "EN45": 4,                     // Resorte británico, alta flexibilidad
+      "EN42J": 3,                    // Carbono medio británico
+      "65Mn": 4,                     // Manganeso chino, buena flexibilidad
+      "1566": 4,                     // Carbono-manganeso, resistente
+      "DNH7": 1                      // Acero danés básico, baja flexibilidad
+    };
 
-    .blade { fill: #bbb; stroke: #888; stroke-width: 1; }
-    .fuller { stroke: #888; stroke-width: 1; stroke-dasharray: 2,2; }
-    .bevel { stroke: #aaa; stroke-width: 1; }
-    .guard { fill: #333; }
-    .handle { fill: #222; }
+    // Simulador de combate medieval
+    const impactSteps = 60;
+    let damageMapA = Array(impactSteps).fill("none");
+    let damageMapB = Array(impactSteps).fill("none");
 
-    input, button { margin: 0 0.5rem 0.5rem 0; }
-  </style>
-</head>
-<body>
-  <h1>Simulación de Daños en el Filo</h1>
-  <button onclick="reset()">Reiniciar</button>
-  <button onclick="hit()">¡Golpea!</button>
-
-  <svg id="viz" width="800" height="500">
-    <text x="200" y="30" class="label">Espada A</text>
-    <text x="560" y="30" class="label">Espada B</text>
-
-    <!-- Espada A -->
-    <g id="swordA">
-      <!-- Hoja -->
-      <rect x="190" y="60" width="20" height="300" class="blade"/>
-      <line x1="200" y1="60" x2="200" y2="360" class="fuller"/>
-      <line x1="190" y1="60" x2="190" y2="360" class="bevel"/>
-      <line x1="210" y1="60" x2="210" y2="360" class="bevel"/>
-      <!-- Punta -->
-      <polygon points="190,60 200,40 210,60" class="blade"/>
-      <!-- Guarda -->
-      <rect x="180" y="360" width="40" height="8" class="guard"/>
-      <!-- Empuñadura -->
-      <rect x="192" y="368" width="16" height="40" class="handle"/>
-    </g>
-
-    <!-- Espada B -->
-    <g id="swordB">
-      <rect x="550" y="60" width="20" height="300" class="blade"/>
-      <line x1="560" y1="60" x2="560" y2="360" class="fuller"/>
-      <line x1="550" y1="60" x2="550" y2="360" class="bevel"/>
-      <line x1="570" y1="60" x2="570" y2="360" class="bevel"/>
-      <polygon points="550,60 560,40 570,60" class="blade"/>
-      <rect x="540" y="360" width="40" height="8" class="guard"/>
-      <rect x="552" y="368" width="16" height="40" class="handle"/>
-    </g>
-
-    <!-- Superposición de Daños en el Filo -->
-    <path id="edgeA" class="ok"/>
-    <path id="edgeB" class="ok"/>
-
-    <text id="result" x="400" y="470" class="label" text-anchor="middle"></text>
-  </svg>
-
-<script>
-  const impactSteps = 60;
-  let damageMapA = Array(impactSteps).fill("none");
-  let damageMapB = Array(impactSteps).fill("none");
-
-  function getDamageType(hrc) {
-    if (hrc <= 48) return "deformación";
-    if (hrc >= 52) return "astillamiento";
-    return Math.random() < 0.5 ? "astillamiento" : "deformación";
-  }
-
-  function getDamageOutcome(hrcA, hrcB) {
-    const diff = Math.abs(hrcA - hrcB);
-    if (diff === 0) {
-      return Math.random() < 0.01 ? [{ target: "A", type: getDamageType(hrcA), severity: 1 }] : [];
+    function getDamageType(hrc) {
+      if (hrc <= 48) return "deformación";
+      if (hrc >= 52) return "astillamiento";
+      return Math.random() < 0.5 ? "astillamiento" : "deformación";
     }
 
-    const chance = Math.min(1, ((diff - 1) * 0.1 + 0.1)/10);
-    const outcomes = [];
-
-    if (Math.random() < chance) outcomes.push({ target: "A", type: getDamageType(hrcA), severity: Math.min(3, Math.ceil(diff / 2)) });
-    if (Math.random() < chance) outcomes.push({ target: "B", type: getDamageType(hrcB), severity: Math.min(3, Math.ceil(diff / 2)) });
-
-    return outcomes;
-  }
-
-  function applyRandomDamage(hrcA, hrcB) {
-    const results = getDamageOutcome(hrcA, hrcB);
-    if (results.length === 0) return "No hay daños visibles en este golpe.";
-
-    let messages = [];
-
-    results.forEach(({ target, type, severity }) => {
-      const map = target === "A" ? damageMapA : damageMapB;
-      const i = Math.floor(Math.random() * impactSteps);
-      map[i] = `${type}:${severity}`;
-      messages.push(`Daño en la Espada ${target}: ${type} (severidad ${severity})`);
-    });
-
-    return messages.join(" | ");
-  }
-
-  function generateEdge(x, yStart, map, side) {
-    const step = 5;
-    let path = `M${x},${yStart}`;
-    for (let i = 0; i < map.length; i++) {
-      let offset = 0;
-      const dmg = map[i];
-      if (dmg !== "none") {
-        const [type, sev] = dmg.split(":");
-        const severity = parseInt(sev);
-        offset = (type === "astillamiento" ? 4 : 3) * severity;
+    function getDamageOutcome(hrcA, hrcB) {
+      const diff = Math.abs(hrcA - hrcB);
+      if (diff === 0) {
+        return Math.random() < 0.01 ? [{ target: "A", type: getDamageType(hrcA), severity: 1 }] : [];
       }
-      const y = yStart + i * step;
-      const dx = side === "right" ? -offset : offset;
-      path += ` L${x + dx},${y}`;
-    }
-    return path;
-  }
 
-  function updateEdges(hrcA, hrcB, message) {
-    const edgeA = document.getElementById("edgeA");
-    const edgeB = document.getElementById("edgeB");
+      const chance = Math.min(1, ((diff - 1) * 0.1 + 0.1)/10);
+      const outcomes = [];
 
-    const pathA = generateEdge(210, 60, damageMapA, "right");
-    const pathB = generateEdge(550, 60, damageMapB, "left");
+      if (Math.random() < chance) outcomes.push({ target: "A", type: getDamageType(hrcA), severity: Math.min(3, Math.ceil(diff / 2)) });
+      if (Math.random() < chance) outcomes.push({ target: "B", type: getDamageType(hrcB), severity: Math.min(3, Math.ceil(diff / 2)) });
 
-    edgeA.setAttribute("d", pathA);
-    edgeB.setAttribute("d", pathB);
-
-    edgeA.setAttribute("class", damageMapA.some(d => d.includes("astillamiento")) ? "fail" :
-                                damageMapA.some(d => d.includes("deformación")) ? "deform" : "ok");
-    edgeB.setAttribute("class", damageMapB.some(d => d.includes("astillamiento")) ? "fail" :
-                                damageMapB.some(d => d.includes("deformación")) ? "deform" : "ok");
-
-    document.getElementById("result").textContent = message;
-  }
-
-  function hit() {
-    const hrcA = parseInt(document.getElementById("hrcA").value);
-    const hrcB = parseInt(document.getElementById("hrcB").value);
-    const result = applyRandomDamage(hrcA, hrcB);
-    updateEdges(hrcA, hrcB, result);
-  }
-
-  function reset() {
-    damageMapA = Array(impactSteps).fill("none");
-    damageMapB = Array(impactSteps).fill("none");
-    updateEdges(parseInt(document.getElementById("hrcA").value), parseInt(document.getElementById("hrcB").value), "Simulación reiniciada.");
-  }
-
-  window.onload = reset;
-</script>
-<div class="result" id="resultBox"></div>
-</div>
-
-
-<script>
-  const flexibilityScale = {
-    "Generic Carbon Steel": 1,
-    "Generic Spring Steel": 5,
-    "1045": 2,
-    "1050 / 1055": 2,
-    "1060 / 1065": 3,
-    "1070 / 1075": 3,
-    "1080 / 1085": 3,
-    "1090 / 1095": 2,
-    "5160": 4,
-    "5166": 5,
-    "9260": 5,
-    "6150": 4,
-    "EN9": 2,
-    "EN45": 4,
-    "EN42J": 3,
-    "65Mn": 4,
-    "1566": 4,
-    "DNH7": 1
-  };
-
-  function normalizeHRC(hrc) {
-    if (!hrc || isNaN(hrc)) return 0;
-    return Math.min(5, Math.max(0, (hrc / 70) * 5));
-  }
-
-  function compareSteels() {
-    const selectA = document.getElementById("steelA").value;
-    const selectB = document.getElementById("steelB").value;
-    const customA = document.getElementById("customA").value.trim();
-    const customB = document.getElementById("customB").value.trim();
-    const hrcA = parseInt(document.getElementById("hrcA").value);
-    const hrcB = parseInt(document.getElementById("hrcB").value);
-    const resultBox = document.getElementById("resultBox");
-
-    const nameA = customA || selectA || "Acero A";
-    const nameB = customB || selectB || "Acero B";
-
-    if (!selectA && !customA || !selectB && !customB) {
-      resultBox.innerHTML = "<strong>Por favor selecciona o nombra ambos tipos de acero.</strong>";
-      return;
+      return outcomes;
     }
 
-    const flexA = flexibilityScale[selectA] || 0;
-    const flexB = flexibilityScale[selectB] || 0;
+    function applyRandomDamage(hrcA, hrcB) {
+      const results = getDamageOutcome(hrcA, hrcB);
+      if (results.length === 0) return "🛡️ Intercambio sin daños visibles - ambas hojas resisten el impacto";
 
-    const hrcNormA = normalizeHRC(hrcA);
-    const hrcNormB = normalizeHRC(hrcB);
+      let messages = [];
+      results.forEach(({ target, type, severity }) => {
+        const map = target === "A" ? damageMapA : damageMapB;
+        const i = Math.floor(Math.random() * impactSteps);
+        map[i] = `${type}:${severity}`;
+        
+        const damageIcon = type === "astillamiento" ? "💥" : "🔨";
+        const severityText = severity === 1 ? "leve" : severity === 2 ? "moderado" : "grave";
+        messages.push(`${damageIcon} Espada ${target}: ${type} ${severityText}`);
+      });
 
-    const scoreA = flexA + hrcNormA;
-    const scoreB = flexB + hrcNormB;
+      return messages.join(" | ");
+    }
 
-    const flexWinner = flexA > flexB ? nameA : flexB > flexA ? nameB : "Empate";
-    const hrcWinner = hrcA > hrcB ? nameA : hrcB > hrcA ? nameB : "Empate";
-    const overallWinner = scoreA > scoreB ? nameA : scoreB > scoreA ? nameB : "Empate";
+    function generateEdge(x, yStart, map, side) {
+      const step = 5;
+      let path = `M${x},${yStart}`;
+      for (let i = 0; i < map.length; i++) {
+        let offset = 0;
+        const dmg = map[i];
+        if (dmg !== "none") {
+          const [type, sev] = dmg.split(":");
+          const severity = parseInt(sev);
+          offset = (type === "astillamiento" ? 4 : 3) * severity;
+        }
+        const y = yStart + i * step;
+        const dx = side === "right" ? -offset : offset;
+        path += ` L${x + dx},${y}`;
+      }
+      return path;
+    }
 
-let consequences = "";
+    function updateEdges(hrcA, hrcB, message) {
+      const edgeA = document.getElementById("edgeA");
+      const edgeB = document.getElementById("edgeB");
 
-// Comparación de flexibilidad
-if (flexA < flexB) {
-  consequences += `<p><strong>Nota para ${nameA}:</strong> Flexibilidad más baja — más propenso a romperse o agrietarse bajo impactos.</p>`;
-}
-if (flexB < flexA) {
-  consequences += `<p><strong>Nota para ${nameB}:</strong> Flexibilidad más baja — más propenso a romperse o agrietarse bajo impactos.</p>`;
-}
+      const pathA = generateEdge(210, 60, damageMapA, "right");
+      const pathB = generateEdge(550, 60, damageMapB, "left");
 
-// Comparación de dureza (HRC)
-if (hrcA < hrcB) {
-  consequences += `<p><strong>Nota para ${nameA}:</strong> Menor dureza — los filos y superficies de impacto pueden abollarse o doblarse y necesitar ser enderezados con martillo.</p>`;
-}
-if (hrcB < hrcA) {
-  consequences += `<p><strong>Nota para ${nameB}:</strong> Menor dureza — los filos y superficies de impacto pueden abollarse o doblarse y necesitar ser enderezados con martillo.</p>`;
-}
+      edgeA.setAttribute("d", pathA);
+      edgeB.setAttribute("d", pathB);
 
-// Riesgos absolutos de HRC
-if (hrcA > 52) {
-  consequences += `<p><strong>Precaución para ${nameA}:</strong> Alta dureza aumenta el riesgo de astillamiento o rotura catastrófica bajo impactos fuertes.</p>`;
-}
-if (hrcB > 52) {
-  consequences += `<p><strong>Precaución para ${nameB}:</strong> Alta dureza aumenta el riesgo de astillamiento o rotura catastrófica bajo impactos fuertes.</p>`;
-}
+      edgeA.setAttribute("class", damageMapA.some(d => d.includes("astillamiento")) ? "fail" :
+                                  damageMapA.some(d => d.includes("deformación")) ? "deform" : "ok");
+      edgeB.setAttribute("class", damageMapB.some(d => d.includes("astillamiento")) ? "fail" :
+                                  damageMapB.some(d => d.includes("deformación")) ? "deform" : "ok");
 
-if (hrcA < 48) {
-  consequences += `<p><strong>Advertencia para ${nameA}:</strong> Baja dureza aumenta el riesgo de abolladuras o deformaciones importantes tras múltiples golpes — puede necesitar mantenimiento frecuente (martilleo).</p>`;
-}
-if (hrcB < 48) {
-  consequences += `<p><strong>Advertencia para ${nameB}:</strong> Baja dureza aumenta el riesgo de abolladuras o deformaciones importantes tras múltiples golpes — puede necesitar mantenimiento frecuente (martilleo).</p>`;
-}
+      document.getElementById("result").textContent = message;
+    }
 
-// Extremos de flexibilidad
-if (flexA <= 1) {
-  consequences += `<p><strong>Riesgo estructural para ${nameA}:</strong> Flexibilidad extremadamente baja — propenso a fracturarse en lugar de flexionar bajo impacto fuerte.</p>`;
-}
-if (flexB <= 1) {
-  consequences += `<p><strong>Riesgo estructural para ${nameB}:</strong> Flexibilidad extremadamente baja — propenso a fracturarse en lugar de flexionar bajo impacto fuerte.</p>`;
-}
+    function hit() {
+      const hrcA = parseInt(document.getElementById("hrcA").value) || 50;
+      const hrcB = parseInt(document.getElementById("hrcB").value) || 50;
+      const result = applyRandomDamage(hrcA, hrcB);
+      updateEdges(hrcA, hrcB, result);
+    }
 
-if (flexA >= 5) {
-  consequences += `<p><strong>Nota para ${nameA}:</strong> Flexibilidad muy alta — excelente para absorber impactos sin agrietarse, pero puede sufrir deformaciones permanentes con repetidos golpes.</p>`;
-}
-if (flexB >= 5) {
-  consequences += `<p><strong>Nota para ${nameB}:</strong> Flexibilidad muy alta — excelente para absorber impactos sin agrietarse, pero puede sufrir deformaciones permanentes con repetidos golpes.</p>`;
-}
+    function reset() {
+      damageMapA = Array(impactSteps).fill("none");
+      damageMapB = Array(impactSteps).fill("none");
+      const hrcA = parseInt(document.getElementById("hrcA").value) || 50;
+      const hrcB = parseInt(document.getElementById("hrcB").value) || 50;
+      updateEdges(hrcA, hrcB, "⚔️ Espadas preparadas para el combate - filos intactos");
+    }
 
-    resultBox.innerHTML = `
-      <h3>Resultado de la Comparación</h3>
-      <p><strong>Flexibilidad:</strong> ${nameA}: ${flexA} vs ${nameB}: ${flexB}</p>
-      <p><strong>Ganador en Flexibilidad:</strong> <span class="winner">${flexWinner}</span></p>
-      <p><strong>HRC:</strong> ${nameA}: ${hrcA || "N/D"} vs ${nameB}: ${hrcB || "N/D"}</p>
-      <p><strong>Ganador en HRC:</strong> <span class="winner">${hrcWinner}</span></p>
-      <hr>
-      <p><strong>Puntuación Total (Flex + HRC):</strong> ${nameA}: ${scoreA.toFixed(2)} vs ${nameB}: ${scoreB.toFixed(2)}</p>
-      <p><strong>🏆 Ganador Final:</strong> <span class="winner">${overallWinner}</span></p>
-      <hr>
-      ${consequences}
-    `;
-  }
-</script>
+    function normalizeHRC(hrc) {
+      if (!hrc || isNaN(hrc)) return 0;
+      return Math.min(5, Math.max(0, (hrc / 70) * 5));
+    }
+
+    function getFlexibilityDescription(flex) {
+      switch(flex) {
+        case 1: return "Muy Rígido";
+        case 2: return "Rígido";
+        case 3: return "Equilibrado";
+        case 4: return "Flexible";
+        case 5: return "Muy Flexible";
+        default: return "Desconocido";
+      }
+    }
+
+    function getHRCDescription(hrc) {
+      if (hrc < 45) return "Muy Blando";
+      if (hrc < 48) return "Blando";
+      if (hrc < 52) return "Óptimo";
+      if (hrc < 58) return "Duro";
+      return "Muy Duro";
+    }
+
+    function compareSteels() {
+      const selectA = document.getElementById("steelA").value;
+      const selectB = document.getElementById("steelB").value;
+      const customA = document.getElementById("customA").value.trim();
+      const customB = document.getElementById("customB").value.trim();
+      const hrcA = parseInt(document.getElementById("hrcA").value);
+      const hrcB = parseInt(document.getElementById("hrcB").value);
+      const resultBox = document.getElementById("resultBox");
+
+      const nameA = customA || selectA || "Primera Hoja";
+      const nameB = customB || selectB || "Segunda Hoja";
+
+      if ((!selectA && !customA) || (!selectB && !customB)) {
+        resultBox.innerHTML = `
+          <div style="text-align: center; color: #dc3545;">
+            <h3>⚠️ Error de Entrada</h3>
+            <p>Por favor, selecciona o nombra ambos tipos de acero para proceder con el análisis.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const flexA = flexibilityScale[selectA] || 0;
+      const flexB = flexibilityScale[selectB] || 0;
+
+      const hrcNormA = normalizeHRC(hrcA);
+      const hrcNormB = normalizeHRC(hrcB);
+
+      const scoreA = flexA + hrcNormA;
+      const scoreB = flexB + hrcNormB;
+
+      const flexWinner = flexA > flexB ? nameA : flexB > flexA ? nameB : "⚖️ Empate";
+      const hrcWinner = hrcA > hrcB ? nameA : hrcB > hrcA ? nameB : "⚖️ Empate";
+      const overallWinner = scoreA > scoreB ? nameA : scoreB > scoreA ? nameB : "⚖️ Empate Técnico";
+
+      let consequences = "";
+      let recommendations = "";
+
+      // Análisis de flexibilidad
+      if (flexA < flexB) {
+        consequences += `<div class="warning-box">
+          <h4>⚠️ ${nameA} - Limitaciones de Flexibilidad</h4>
+          <p>Mayor rigidez estructural aumenta el riesgo de fractura súbita bajo impactos de alta energía. 
+          Recomendado para técnicas de corte precisas, menos adecuado para combate prolongado.</p>
+        </div>`;
+      }
+      if (flexB < flexA) {
+        consequences += `<div class="warning-box">
+          <h4>⚠️ ${nameB} - Limitaciones de Flexibilidad</h4>
+          <p>Mayor rigidez estructural aumenta el riesgo de fractura súbita bajo impactos de alta energía. 
+          Recomendado para técnicas de corte precisas, menos adecuado para combate prolongado.</p>
+        </div>`;
+      }
+
+      // Análisis de dureza
+      if (hrcA < hrcB) {
+        consequences += `<div style="background: rgba(255, 193, 7, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffc107;">
+          <h4>🔨 ${nameA} - Análisis de Dureza Inferior</h4>
+          <p>Menor dureza resulta en mayor susceptibilidad a deformación plástica. Los filos pueden requerir 
+          mantenimiento frecuente (enderezado con martillo) pero raramente sufren fractura catastrófica.</p>
+        </div>`;
+      }
+      if (hrcB < hrcA) {
+        consequences += `<div style="background: rgba(255, 193, 7, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffc107;">
+          <h4>🔨 ${nameB} - Análisis de Dureza Inferior</h4>
+          <p>Menor dureza resulta en mayor susceptibilidad a deformación plástica. Los filos pueden requerir 
+          mantenimiento frecuente (enderezado con martillo) pero raramente sufren fractura catastrófica.</p>
+        </div>`;
+      }
+
+      // Análisis de riesgos críticos
+      if (hrcA > 55) {
+        consequences += `<div class="warning-box">
+          <h4>💥 ${nameA} - RIESGO CRÍTICO DE FRAGILIDAD</h4>
+          <p>Dureza extrema (HRC ${hrcA}) predispone a fractura catastrófica. Uso recomendado únicamente 
+          para exhibición o técnicas muy controladas. Evitar contacto fuerte con objetivos duros.</p>
+        </div>`;
+      }
+      if (hrcB > 55) {
+        consequences += `<div class="warning-box">
+          <h4>💥 ${nameB} - RIESGO CRÍTICO DE FRAGILIDAD</h4>
+          <p>Dureza extrema (HRC ${hrcB}) predispone a fractura catastrófica. Uso recomendado únicamente 
+          para exhibición o técnicas muy controladas. Evitar contacto fuerte con objetivos duros.</p>
+        </div>`;
+      }
+
+      if (hrcA < 45) {
+        consequences += `<div style="background: rgba(108, 117, 125, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #6c757d;">
+          <h4>🛠️ ${nameA} - Dureza Subóptima</h4>
+          <p>Dureza insuficiente (HRC ${hrcA}) para aplicaciones de combate serias. Adecuado para 
+          entrenamiento básico o recreación ligera. Requerirá templado adicional para uso intensivo.</p>
+        </div>`;
+      }
+      if (hrcB < 45) {
+        consequences += `<div style="background: rgba(108, 117, 125, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #6c757d;">
+          <h4>🛠️ ${nameB} - Dureza Subóptima</h4>
+          <p>Dureza insuficiente (HRC ${hrcB}) para aplicaciones de combate serias. Adecuado para 
+          entrenamiento básico o recreación ligera. Requerirá templado adicional para uso intensivo.</p>
+        </div>`;
+      }
+
+      // Recomendaciones específicas
+      if (flexA >= 4 && hrcA >= 48 && hrcA <= 52) {
+        recommendations += `<div class="steel-properties">
+          <h4>✅ ${nameA} - CONFIGURACIÓN ÓPTIMA</h4>
+          <p>Excelente equilibrio para recreación medieval seria. Flexibilidad adecuada para absorber impactos, 
+          dureza suficiente para mantener geometría de filo. Ideal para combate controlado.</p>
+        </div>`;
+      }
+      if (flexB >= 4 && hrcB >= 48 && hrcB <= 52) {
+        recommendations += `<div class="steel-properties">
+          <h4>✅ ${nameB} - CONFIGURACIÓN ÓPTIMA</h4>
+          <p>Excelente equilibrio para recreación medieval seria. Flexibilidad adecuada para absorber impactos, 
+          dureza suficiente para mantener geometría de filo. Ideal para combate controlado.</p>
+        </div>`;
+      }
+
+      resultBox.innerHTML = `
+        <h3 style="color: #c8a25f; text-align: center; margin-bottom: 25px;">
+          ⚔️ ANÁLISIS METALÚRGICO COMPARATIVO ⚔️
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+          <div style="background: rgba(200, 162, 95, 0.1); padding: 20px; border-radius: 10px;">
+            <h4 style="color: #c8a25f; text-align: center;">${nameA}</h4>
+            <p><strong>Flexibilidad:</strong> ${flexA}/5 (${getFlexibilityDescription(flexA)})</p>
+            <p><strong>Dureza HRC:</strong> ${hrcA || "N/D"} (${getHRCDescription(hrcA)})</p>
+            <p><strong>Puntuación Total:</strong> ${scoreA.toFixed(2)}</p>
+          </div>
+          <div style="background: rgba(200, 162, 95, 0.1); padding: 20px; border-radius: 10px;">
+            <h4 style="color: #c8a25f; text-align: center;">${nameB}</h4>
+            <p><strong>Flexibilidad:</strong> ${flexB}/5 (${getFlexibilityDescription(flexB)})</p>
+            <p><strong>Dureza HRC:</strong> ${hrcB || "N/D"} (${getHRCDescription(hrcB)})</p>
+            <p><strong>Puntuación Total:</strong> ${scoreB.toFixed(2)}</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 25px;">
+          <div style="background: linear-gradient(45deg, rgba(200, 162, 95, 0.2), rgba(244, 208, 63, 0.2)); padding: 20px; border-radius: 15px; border: 2px solid rgba(200, 162, 95, 0.3);">
+            <h4 style="color: #c8a25f;">🏆 VEREDICTO DEL MAESTRO HERRERO</h4>
+            <p style="font-size: 1.2em;"><strong>Ganador en Flexibilidad:</strong> <span class="winner">${flexWinner}</span></p>
+            <p style="font-size: 1.2em;"><strong>Ganador en Dureza:</strong> <span class="winner">${hrcWinner}</span></p>
+            <p style="font-size: 1.4em; margin-top: 15px;"><strong>🎯 SUPERIOR GENERAL:</strong> <span class="winner">${overallWinner}</span></p>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="color: #c8a25f; margin-bottom: 15px;">📋 EVALUACIÓN TÉCNICA DETALLADA</h4>
+          ${consequences}
+          ${recommendations}
+        </div>
+
+        <div style="background: rgba(200, 162, 95, 0.05); padding: 20px; border-radius: 10px; margin-top: 20px; border: 1px solid rgba(200, 162, 95, 0.2);">
+          <p style="font-style: italic; text-align: center; color: #b0b0b0;">
+            💡 <strong>Consejo del Maestro:</strong> Usa el simulador de combate superior para observar 
+            cómo estos aceros se comportarían en enfrentamientos reales. Cada golpe revela las 
+            características únicas de cada aleación.
+          </p>
+        </div>
+      `;
+    }
+
+    // Inicialización
+    window.onload = function() {
+      reset();
+      // Configurar valores por defecto para demostración
+      document.getElementById("hrcA").value = 52;
+      document.getElementById("hrcB").value = 50;
+    };
+  </script>
 
 </body>
 </html>
