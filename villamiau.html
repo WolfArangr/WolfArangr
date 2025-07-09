@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misterio en VillaMiau | Mystery at VillaMiau Manor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffd700;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .language-toggle {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a2e;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .language-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23000" width="1200" height="800"/><g fill="%23ffffff" fill-opacity="0.1"><circle cx="200" cy="200" r="100"/><circle cx="800" cy="300" r="80"/><circle cx="1000" cy="600" r="120"/></g></svg>') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 0, 0, 0.1));
+            animation: pulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.3; }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            100% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: #ffd700;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+        }
+
+        /* Game Info */
+        .game-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-card h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Characters Grid */
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .character-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent);
+            transition: transform 0.5s ease;
+            transform: scale(0);
+        }
+
+        .character-card:hover::before {
+            transform: scale(1);
+        }
+
+        .character-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .character-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .character-name {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .character-profession {
+            color: #ccc;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .character-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Rules Section */
+        .rules {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .rules-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .rule-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(238, 90, 82, 0.1));
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .rule-card h4 {
+            color: #ff6b6b;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Hidden content for language toggle */
+        .es-content { display: block; }
+        .en-content { display: none; }
+
+        .lang-en .es-content { display: none; }
+        .lang-en .en-content { display: block; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🏰 VillaMiau</div>
+            <ul class="nav-links">
+                <li><a href="#home">Inicio / Home</a></li>
+                <li><a href="#story">Historia / Story</a></li>
+                <li><a href="#characters">Personajes / Characters</a></li>
+                <li><a href="#rules">Reglas / Rules</a></li>
+            </ul>
+            <button class="language-toggle" onclick="toggleLanguage()">
+                <span class="es-content">🇬🇧 English</span>
+                <span class="en-content">🇪🇸 Español</span>
+            </button>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="es-content">MISTERIO EN VILLAMIAU</h1>
+            <h1 class="en-content">MYSTERY AT VILLAMIAU MANOR</h1>
+            <p class="es-content">Un juego de misterio para 7 jugadores • 3 horas de diversión</p>
+            <p class="en-content">A mystery game for 7 players • 3 hours of fun</p>
+            <a href="#story" class="cta-button">
+                <span class="es-content">🔍 Comenzar Investigación</span>
+                <span class="en-content">🔍 Start Investigation</span>
+            </a>
+        </div>
+    </section>
+
+    <section id="story" class="container">
+        <h2 class="section-title">
+            <span class="es-content">La Historia</span>
+            <span class="en-content">The Story</span>
+        </h2>
+        
+        <div class="game-info fade-in">
+            <div class="es-content">
+                <h3>🐱 El Crimen</h3>
+                <p>Don Eduardo Gatardo, un acaudalado empresario gatuno, ha sido encontrado muerto en su mansión VillaMiau esta mañana. Su cuerpo fue hallado en el salón principal con evidentes signos de envenenamiento.</p>
+                <p>La detective Tina ha sido llamada para investigar el caso. Tiene hasta las 22:00 para descubrir al culpable antes de que se cierre la investigación. ¿Podrá resolver este misterio felino?</p>
+            </div>
+            <div class="en-content">
+                <h3>🐱 The Crime</h3>
+                <p>Don Eduardo Gatardo, a wealthy feline businessman, has been found dead in his VillaMiau mansion this morning. His body was discovered in the main hall with evident signs of poisoning.</p>
+                <p>Detective Tina has been called to investigate the case. She has until 22:00 to discover the culprit before the investigation closes. Can she solve this feline mystery?</p>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card fade-in">
+                <h3>⏰ Duración / Duration</h3>
+                <p>3 horas<br>(19:00 - 22:00)</p>
+            </div>
+            <div class="info-card fade-in">
+                <h3>👥 Jugadores / Players</h3>
+                <p>7 personas<br>Ages 8+</p>
+            </div>
+            <div class="info-card fade-in">
+                <h3>🎭 Género / Genre</h3>
+                <p class="es-content">Misterio y Deducción</p>
+                <p class="en-content">Mystery & Deduction</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="characters" class="container">
+        <h2 class="section-title">
+            <span class="es-content">Los Sospechosos</span>
+            <span class="en-content">The Suspects</span>
+        </h2>
+        
+        <div class="characters-grid">
+            <div class="character-card fade-in">
+                <span class="character-emoji">🚗</span>
+                <h3 class="character-name">Don Luis</h3>
+                <p class="character-profession">
+                    <span class="es-content">Chófer Personal</span>
+                    <span class="en-content">Personal Driver</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Llevaba 10 años trabajando para Don Eduardo. Nervioso y evita el contacto visual. Su trabajo estaba en peligro.</span>
+                    <span class="en-content">Had been working for Don Eduardo for 10 years. Nervous and avoids eye contact. His job was in danger.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">💼</span>
+                <h3 class="character-name">Don Carlos</h3>
+                <p class="character-profession">
+                    <span class="es-content">Asesor Financiero</span>
+                    <span class="en-content">Financial Advisor</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Manejaba las finanzas de Don Eduardo. Calculador e inteligente, mantiene la calma bajo presión.</span>
+                    <span class="en-content">Managed Don Eduardo's finances. Calculating and intelligent, keeps calm under pressure.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">🌹</span>
+                <h3 class="character-name">Doña Rosa</h3>
+                <p class="character-profession">
+                    <span class="es-content">Ama de Llaves</span>
+                    <span class="en-content">Housekeeper</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Lleva 8 años en la mansión. Protectora y leal, pero guarda secretos románticos.</span>
+                    <span class="en-content">Has been at the mansion for 8 years. Protective and loyal, but keeps romantic secrets.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">🔍</span>
+                <h3 class="character-name">Detective Tina</h3>
+                <p class="character-profession">
+                    <span class="es-content">Detective de Policía</span>
+                    <span class="en-content">Police Detective</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Especialista en casos de asesinato. Observadora y directa, no se deja intimidar por nadie.</span>
+                    <span class="en-content">Murder case specialist. Observant and direct, not easily intimidated by anyone.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">🧹</span>
+                <h3 class="character-name">Doña María</h3>
+                <p class="character-profession">
+                    <span class="es-content">Criada</span>
+                    <span class="en-content">Maid</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Trabaja en la mansión desde hace 5 años. Discreta pero observadora, conoce todos los secretos.</span>
+                    <span class="en-content">Has worked at the mansion for 5 years. Discreet but observant, knows all the secrets.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">🇸🇪</span>
+                <h3 class="character-name">Erik Lindqvist</h3>
+                <p class="character-profession">
+                    <span class="es-content">Empresario Sueco</span>
+                    <span class="en-content">Swedish Businessman</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Socio comercial de Don Eduardo. Finge no entender bien el español y se hace el despistado.</span>
+                    <span class="en-content">Don Eduardo's business partner. Pretends not to understand Spanish well and acts clueless.</span>
+                </p>
+            </div>
+
+            <div class="character-card fade-in">
+                <span class="character-emoji">🎮</span>
+                <h3 class="character-name">Pepito</h3>
+                <p class="character-profession">
+                    <span class="es-content">Sobrino (12 años)</span>
+                    <span class="en-content">Nephew (12 years old)</span>
+                </p>
+                <p class="character-description">
+                    <span class="es-content">Hijo de la hermana de Don Eduardo. Curioso e inocente, le gustan los videojuegos y explorar la casa.</span>
+                    <span class="en-content">Son of Don Eduardo's sister. Curious and innocent, likes video games and exploring the house.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="rules" class="rules">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="es-content">Reglas del Juego</span>
+                <span class="en-content">Game Rules</span>
+            </h2>
+            
+            <div class="rules-content">
+                <div class="rules-grid">
+                    <div class="rule-card fade-in">
+                        <h4 class="es-content">🎭 Preparación</h4>
+                        <h4 class="en-content">🎭 Setup</h4>
+                        <ul class="es-content">
+                            <li>Cada jugador recibe su ficha de personaje</li>
+                            <li>Lean sus objetivos secretos en silencio</li>
+                            <li>15 minutos para estudiar su personaje</li>
+                            <li>La detective comienza la investigación</li>
+                        </ul>
+                        <ul class="en-content">
+                            <li>Each player receives their character sheet</li>
+                            <li>Read your secret objectives silently</li>
+                            <li>15 minutes to study your character</li>
+                            <li>The detective starts the investigation</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <h4 class="es-content">⏰ Desarrollo</h4>
+                        <h4 class="en-content">⏰ Gameplay</h4>
+                        <ul class="es-content">
+                            <li>Duración: 3 horas (19:00 - 22:00)</li>
+                            <li>Mantén tu personaje todo el tiempo</li>
+                            <li>Muévete libremente por la casa</li>
+                            <li>Forma grupos para hablar en privado</li>
+                        </ul>
+                        <ul class="en-content">
+                            <li>Duration: 3 hours (19:00 - 22:00)</li>
+                            <li>Stay in character at all times</li>
+                            <li>Move freely around the house</li>
+                            <li>Form groups to talk privately</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <h4 class="es-content">🚫 Prohibiciones</h4>
+                        <h4 class="en-content">🚫 Prohibitions</h4>
+                        <ul class="es-content">
+                            <li>No mentir sobre hechos básicos</li>
+                            <li>No revelar directamente tu objetivo</li>
+                            <li>No salirse del personaje</li>
+                            <li>No mostrar la ficha a otros</li>
+                        </ul>
+                        <ul class="en-content">
+                            <li>Cannot lie about basic facts</li>
+                            <li>Cannot directly reveal your objective</li>
+                            <li>Cannot break character</li>
+                            <li>Cannot show character sheet to others</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <h4 class="es-content">🗳️ Votación Final</h4>
+                        <h4 class="en-content">🗳️ Final Vote</h4>
+                        <ul class="es-content">
+                            <li>A las 22:00 todos votan</li>
+                            <li>Se revela la verdad</li>
+                            <li>Gana quien cumplió mejor su objetivo</li>
+                            <li>¡Mantén el misterio hasta el final!</li>
+                        </ul>
+                        <ul class="en-content">
+                            <li>At 22:00 everyone votes</li>
+                            <li>The truth is revealed</li>
+                            <li>Winner is who best fulfilled their objective</li>
+                            <li>Keep the mystery until the end!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">🏰 VillaMiau</div>
+                <p class="es-content">¡Que comience el misterio!</p>
+                <p class="en-content">Let the mystery begin!</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language toggle functionality
+        function toggleLanguage() {
+            document.body.classList.toggle('lang-en');
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(0, 0, 0, 0.8)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Character cards hover effect
+        document.querySelectorAll('.character-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add typing effect to hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        // Initialize typing effect when page loads
+        window.addEventListener('load', () => {
+            const heroTitle = document.querySelector('.hero h1');
+            const originalText = heroTitle.textContent;
+            setTimeout(() => {
+                typeWriter(heroTitle, originalText, 80);
+            }, 1000);
+        });
+
+        // Add floating animation to character emojis
+        document.querySelectorAll('.character-emoji').forEach(emoji => {
+            emoji.style.animation = 'float 3s ease-in-out infinite';
+        });
+
+        // Add CSS for floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
