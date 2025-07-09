@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misterio en VillaMiau - [NOMBRE_PERSONAJE]</title>
+    <title>Misterio en VillaMiau - <span data-var="NOMBRE_PERSONAJE"></span></title>
     <style>
         * {
             margin: 0;
@@ -206,8 +206,8 @@
     <div class="container">
         <div class="header">
             <h1 class="game-title">MISTERIO EN VILLAMIAU</h1>
-            <h2 class="character-name">[EMOJI] [NOMBRE_PERSONAJE]</h2>
-            <p class="character-profession">[PROFESION]</p>
+            <h2 class="character-name"><span data-var="EMOJI"></span> <span data-var="NOMBRE_PERSONAJE"></span></h2>
+            <p class="character-profession"><span data-var="PROFESION"></span></p>
         </div>
 
         <div class="content">
@@ -217,31 +217,31 @@
 
             <div class="section">
                 <h2>📋 Información Básica</h2>
-                <p><strong>Edad:</strong> [EDAD] años</p>
-                <p><strong>Profesión:</strong> [PROFESION]</p>
+                <p><strong>Edad:</strong> <span data-var="EDAD"></span> años</p>
+                <p><strong>Profesión:</strong> <span data-var="PROFESION"></span></p>
                 <div class="personality-traits">
-                    [TRAITS]
+                    <span data-var="TRAITS"></span>
                 </div>
             </div>
 
             <div class="section">
                 <h2>📖 Tu Historia</h2>
-                <p>[HISTORIA]</p>
+                <p><span data-var="HISTORIA"></span></p>
             </div>
 
             <div class="secret-objective">
                 <h3>🎯 Tu Objetivo Secreto</h3>
-                <p>[OBJETIVO_SECRETO]</p>
+                <p><span data-var="OBJETIVO_SECRETO"></span></p>
             </div>
 
             <div class="knowledge-section">
                 <h3>🧠 Lo que Sabes</h3>
-                <p>[CONOCIMIENTOS]</p>
+                <p><span data-var="CONOCIMIENTOS"></span></p>
             </div>
 
             <div class="section">
                 <h2>🎭 Consejos para Interpretar</h2>
-                <p>[CONSEJOS]</p>
+                <p><span data-var="CONSEJOS"></span></p>
             </div>
 
             <div class="section">
@@ -260,6 +260,30 @@
     </div>
 
     <script>
+        // Función para cargar las variables del final del documento
+        function loadCharacterData() {
+            const scriptElements = document.querySelectorAll('script[type="text/character-data"]');
+            const characterData = {};
+            
+            scriptElements.forEach(script => {
+                const lines = script.textContent.trim().split('\n');
+                lines.forEach(line => {
+                    const [key, value] = line.split('=');
+                    if (key && value) {
+                        characterData[key.trim()] = value.trim();
+                    }
+                });
+            });
+            
+            // Reemplazar todas las variables en el documento
+            Object.keys(characterData).forEach(key => {
+                const elements = document.querySelectorAll(`[data-var="${key}"]`);
+                elements.forEach(element => {
+                    element.innerHTML = characterData[key];
+                });
+            });
+        }
+
         // Configurar el temporizador para las 22:00
         function updateTimer() {
             const now = new Date();
@@ -287,10 +311,6 @@
             }
         }
         
-        // Actualizar el temporizador cada segundo
-        setInterval(updateTimer, 1000);
-        updateTimer();
-        
         // Efecto de parpadeo para elementos importantes
         function addBlinkEffect() {
             const secretObjective = document.querySelector('.secret-objective');
@@ -310,8 +330,13 @@
         `;
         document.head.appendChild(style);
         
-        // Inicializar efectos
-        addBlinkEffect();
+        // Inicializar todo cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCharacterData();
+            addBlinkEffect();
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        });
         
         // Prevenir clic derecho y selección de texto para mantener la inmersión
         document.addEventListener('contextmenu', function(e) {
@@ -321,6 +346,20 @@
         document.addEventListener('selectstart', function(e) {
             e.preventDefault();
         });
+    </script>
+
+    <!-- CONFIGURACIÓN DEL PERSONAJE -->
+    <!-- Simplemente edita los valores después del = para cada variable -->
+    <script type="text/character-data">
+        NOMBRE_PERSONAJE = DON LUIS
+        EMOJI = 🚗
+        PROFESION = Chófer personal de Don Eduardo
+        EDAD = 45
+        TRAITS = <span class="trait">Nervioso</span><span class="trait">Evita contacto visual</span><span class="trait">Tartamudea</span>
+        HISTORIA = Llevaba 10 años trabajando para Don Eduardo como su chófer de confianza. Recientemente descubrió que su jefe planeaba despedirlo y reemplazarlo por un chófer más joven. La economía familiar dependía completamente de este trabajo, y desesperado por mantener su empleo, decidió envenenar a Don Eduardo con veneno para ratas que encontró en el garaje de la mansión.
+        OBJETIVO_SECRETO = Conseguir que culpen a otra persona del asesinato. Debes actuar nervioso pero intentar dirigir las sospechas hacia otros personajes, especialmente hacia Erik (el sueco) o hacia Pepito. Usa tu nerviosismo como una ventaja para parecer inocente.
+        CONOCIMIENTOS = Sabes que Doña Rosa está secretamente enamorada de ti, pero no sabes que ella descubrió que eres el asesino. Sabes que Don Carlos es tu cómplice y que él te ayudó a planear el asesinato a cambio de una parte de la herencia. Conoces todos los movimientos de la casa por tu trabajo como chófer.
+        CONSEJOS = Actúa nervioso y culpable, pero no demasiado obvio. Tartamudea cuando te hagan preguntas directas sobre la noche del crimen. Evita el contacto visual con la detective. Intenta señalar a otros como sospechosos, especialmente menciona que Erik actuaba raro o que Pepito estaba despierto muy tarde.
     </script>
 </body>
 </html>
