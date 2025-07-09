@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misterio en VillaMiau - <span data-var="NOMBRE_PERSONAJE"></span></title>
+    <title>Mistery in VillaMiau - <span data-var="NOMBRE_PERSONAJE"></span></title>
     <style>
         * {
             margin: 0;
@@ -200,67 +200,67 @@
 </head>
 <body>
     <div class="timer" id="timer">
-        Tiempo restante: <span id="countdown">--:--:--</span>
+        Time left: <span id="countdown">--:--:--</span>
     </div>
 
     <div class="container">
         <div class="header">
-            <h1 class="game-title">MISTERIO EN VILLAMIAU</h1>
+            <h1 class="game-title">MYSTERY IN VILLAMIAU</h1>
             <h2 class="character-name"><span data-var="EMOJI"></span> <span data-var="NOMBRE_PERSONAJE"></span></h2>
             <p class="character-profession"><span data-var="PROFESION"></span></p>
         </div>
 
         <div class="content">
             <div class="warning">
-                ⚠️ INFORMACIÓN CONFIDENCIAL - No muestres esta página a otros jugadores
+                ⚠️ CONFIDENTIAL INFORMATION – Do not show this page to other players
             </div>
 
             <div class="section">
-                <h2>📋 Información Básica</h2>
-                <p><strong>Edad:</strong> <span data-var="EDAD"></span> años</p>
-                <p><strong>Profesión:</strong> <span data-var="PROFESION"></span></p>
+                <h2>📋 Basic Information</h2>
+                <p><strong>Age:</strong> <span data-var="EDAD"></span> years old</p>
+                <p><strong>Profession:</strong> <span data-var="PROFESION"></span></p>
                 <div class="personality-traits">
                     <span data-var="TRAITS"></span>
                 </div>
             </div>
 
             <div class="section">
-                <h2>📖 Tu Historia</h2>
+                <h2>📖 Your Story</h2>
                 <p><span data-var="HISTORIA"></span></p>
             </div>
 
             <div class="secret-objective">
-                <h3>🎯 Tu Objetivo Secreto</h3>
+                <h3>🎯 Your Secret Objective</h3>
                 <p><span data-var="OBJETIVO_SECRETO"></span></p>
             </div>
 
             <div class="knowledge-section">
-                <h3>🧠 Lo que Sabes</h3>
+                <h3>🧠 What You Know</h3>
                 <p><span data-var="CONOCIMIENTOS"></span></p>
             </div>
 
             <div class="section">
-                <h2>🎭 Consejos para Interpretar</h2>
+                <h2>🎭 Roleplaying Tips</h2>
                 <p><span data-var="CONSEJOS"></span></p>
             </div>
 
             <div class="section">
-                <h2>⚖️ Reglas Importantes</h2>
-                <p>• No puedes mentir sobre hechos básicos (profesión, tiempo en la casa, etc.)</p>
-                <p>• No puedes revelar directamente tu objetivo secreto</p>
-                <p>• No puedes salirte del personaje</p>
-                <p>• No puedes mostrar esta página a otros jugadores</p>
-                <p>• El juego termina a las 22:00 con la votación final</p>
+                <h2>⚖️ Important Rules</h2>
+                <p>• You cannot lie about basic facts (profession, time in the house, etc.)</p>
+                <p>• You cannot reveal your secret objective directly</p>
+                <p>• You must stay in character</p>
+                <p>• You must not show this page to other players</p>
+                <p>• The game ends at 22:00 with the final vote</p>
             </div>
         </div>
 
         <div class="footer">
-            <p>🕰️ Votación final: 22:00 | 🎯 ¡Cumple tu objetivo secreto para ganar!</p>
+            <p>🕰️ Final Vote: 22:00 | 🎯 Achieve your secret objective to win!</p>
         </div>
     </div>
 
     <script>
-        // Función para cargar las variables del final del documento
+        // Function to load character variables from the script at the end
         function loadCharacterData() {
             const scriptElements = document.querySelectorAll('script[type="text/character-data"]');
             const characterData = {};
@@ -275,7 +275,6 @@
                 });
             });
             
-            // Reemplazar todas las variables en el documento
             Object.keys(characterData).forEach(key => {
                 const elements = document.querySelectorAll(`[data-var="${key}"]`);
                 elements.forEach(element => {
@@ -284,13 +283,12 @@
             });
         }
 
-        // Configurar el temporizador para las 22:00
+        // Set timer to countdown until 22:00
         function updateTimer() {
             const now = new Date();
             const target = new Date();
             target.setHours(22, 0, 0, 0);
             
-            // Si ya pasaron las 22:00, poner el objetivo para el día siguiente
             if (now > target) {
                 target.setDate(target.getDate() + 1);
             }
@@ -305,21 +303,21 @@
                 document.getElementById('countdown').textContent = 
                     `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             } else {
-                document.getElementById('countdown').textContent = "¡VOTACIÓN!";
+                document.getElementById('countdown').textContent = "VOTE NOW!";
                 document.getElementById('countdown').style.color = "#ff6b6b";
                 document.getElementById('timer').style.backgroundColor = "rgba(139, 0, 0, 0.9)";
             }
         }
-        
-        // Efecto de parpadeo para elementos importantes
+
+        // Add pulse animation effect to secret objective section
         function addBlinkEffect() {
             const secretObjective = document.querySelector('.secret-objective');
             if (secretObjective) {
                 secretObjective.style.animation = 'pulse 2s infinite';
             }
         }
-        
-        // Añadir estilos de animación
+
+        // Add pulse animation styles dynamically
         const style = document.createElement('style');
         style.textContent = `
             @keyframes pulse {
@@ -329,20 +327,20 @@
             }
         `;
         document.head.appendChild(style);
-        
-        // Inicializar todo cuando se carga la página
+
+        // Initialize everything when page is loaded
         document.addEventListener('DOMContentLoaded', function() {
             loadCharacterData();
             addBlinkEffect();
             updateTimer();
             setInterval(updateTimer, 1000);
         });
-        
-        // Prevenir clic derecho y selección de texto para mantener la inmersión
+
+        // Disable right click and text selection to maintain immersion
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
-        
+
         document.addEventListener('selectstart', function(e) {
             e.preventDefault();
         });
@@ -353,11 +351,11 @@
     <script type="text/character-data">
         NOMBRE_PERSONAJE = EFFRAIM HUSQVARNA
         EMOJI = 🇸🇪
-        PROFESION = Swedish businessman, Don Eduardo's partner
+        PROFESION = Swedish businessman, Don Eduardo's business partner
         EDAD = 40
         TRAITS = <span class="trait">Evasive</span><span class="trait">Pretends confusion</span><span class="trait">Nervous</span>
         HISTORIA = Came to Spain to close an important business deal with Don Eduardo. Had planned to leave this morning and return to Sweden, but now he's trapped by the investigation. He needs to leave tomorrow morning, urgently. He's genuinely worried about missing important meetings in Stockholm, but he's also hiding something about what he witnessed last night.
-        OBJETIVO_SECRETO = You want to leave as soon as possible because you have urgent business matters in Sweden. You prefer to pretend you don't understand Spanish very well and that you didn't see anything suspicious. You're genuinely innocent but your evasive behavior makes you look guilty. If you're asked to stay for an interrogation, you're screwed so you'd best find out who did it.
+        OBJETIVO_SECRETO = You want to leave as soon as possible because you have urgent business matters in Sweden. Don Eduardo's death is economically beneficial to you, so you prefer to pretend you don't understand Spanish very well and that you didn't see anything suspicious. You're genuinely innocent but you benefit from Don Eduardo's death so you don't want to look guilty. If you're asked to stay for an interrogation, you're screwed so you'd best find out who did it.
         CONOCIMIENTOS = You saw Don Luis and Don Carlos talking quietly in the garden last night around 11 PM. You heard Don Eduardo on the phone saying he had to make "a difficult decision" tomorrow morning. You noticed Doña Rosa acting strangely nervous around Don Luis. You prefer not to get involved in Spanish family drama.
         CONSEJOS = Pretend your Spanish isn't very good when asked difficult questions. Act confused and say things like "I don't understand" or "Can you repeat?" Keep mentioning that you need to return to Sweden urgently. Act nervous but not guilty - more like someone who's uncomfortable being involved in a murder investigation.
     </script>
